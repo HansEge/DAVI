@@ -8,7 +8,7 @@ import seaborn as sns
 # path = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK_car_accidents\\"
 
 # Stinus' home computer path
-path = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents"
+path = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\"
 
 
 us_veh = pd.read_csv (path + "VEH_AUX.csv")
