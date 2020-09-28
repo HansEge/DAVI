@@ -22,7 +22,7 @@ df2 = pd.DataFrame({"Year" : us_acc["YEAR"], "Hit and run": us_acc["A_HR"]})
 count_hit_and_run = []
 count_no_hit_and_run = []
 
-# foor-loop to count hit and run and not hit and run for each year
+# for-loop to count hit and run and not hit and run for each year
 for year in range(1982, 2018):
     count_hit_and_run.append(len(df2.loc[(df2['Year'] == year) & (df2['Hit and run'] == 1)]))
     count_no_hit_and_run.append(len(df2.loc[(df2['Year'] == year) & (df2['Hit and run'] == 2)]))
