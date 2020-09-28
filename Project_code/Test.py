@@ -4,13 +4,16 @@ import plotly.graph_objects as go
 import seaborn as sns
 
 # Daniels path
-path_dalle_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\US_car_accidents\\"
-path_dalle_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK_car_accidents\\"
+# path = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\US_car_accidents\\"
+# path = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK_car_accidents\\"
+
+# Stinus' home computer path
+path = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents"
 
 
-us_veh = pd.read_csv (path_dalle_us + "VEH_AUX.csv")
-us_per = pd.read_csv (path_dalle_us + "PER_AUX.csv")
-us_acc = pd.read_csv (path_dalle_us + "ACC_AUX.csv")
+us_veh = pd.read_csv (path + "VEH_AUX.csv")
+us_per = pd.read_csv (path + "PER_AUX.csv")
+us_acc = pd.read_csv (path + "ACC_AUX.csv")
 
 # New dataframe only including year and hit and run attribute
 df2 = pd.DataFrame({"Year" : us_acc["YEAR"], "Hit and run": us_acc["A_HR"]})
