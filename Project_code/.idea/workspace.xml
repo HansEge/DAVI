@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="24f369ab-d568-42aa-886f-470f15b54f9e" name="Default Changelist" comment="">
+    <list default="true" id="a369e5bd-bdf1-447b-a2b5-33e6f434279e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,21 +10,12 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1hzebSRW7TgFip6TSXYzTr5r3s6" />
+  <component name="ProjectId" id="1i9TcXmoq5O4IkJ3LJzxgVoQBhI" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Test.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -49,7 +39,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\stinu\OneDrive\Desktop\Computerteknologi\DAVI\DAVI\Project_code\venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\stinu\AppData\Local\Programs\Python\Python37\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -69,11 +59,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="24f369ab-d568-42aa-886f-470f15b54f9e" name="Default Changelist" comment="" />
-      <created>1601018418852</created>
+      <changelist id="a369e5bd-bdf1-447b-a2b5-33e6f434279e" name="Default Changelist" comment="" />
+      <created>1601318888571</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1601018418852</updated>
+      <updated>1601318888571</updated>
     </task>
     <servers />
   </component>
@@ -95,8 +85,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Test.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="15" />
+          <line>21</line>
+          <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
