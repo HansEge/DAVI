@@ -1,20 +1,70 @@
-import numpy as np
+#---------------------------------------------------------------
+# visit http://127.0.0.1:8050/ in your web browser.
+#---------------------------------------------------------------
 import pandas as pd
-import plotly
-import plotly.offline as offline
-import plotly.graph_objs as go
 import plotly.express as px
+
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+
+from dash.dependencies import Input, Output
+
 
 px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew")
 
-path = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
+path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
+path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
 
-uk_veh = pd.read_csv (path + "Accidents0515.csv", nrows=500000)
+uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=500000)
+us_acc = pd.read_csv(path_us + "accident.csv")
 
-fig = px.scatter_mapbox(uk_veh,
-                        lat=uk_veh["Latitude"],
-                        lon=uk_veh["Longitude"],
-                        color = uk_veh["Day_of_Week"],
-                        )
 
-fig.show()
+# Dash stuff
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+app.layout = html.Div([
+    dcc.Graph(id='dropdown_parameters'),
+    dcc.Dropdown(
+        id='dropdown',
+        options=[
+            {'label': "Day of the week", 'value': 'Day_of_Week'},
+            {'label': "Accident Severity", 'value': 'Accident_Severity'},
+            {'label': "Local Authority(District)", 'value': 'Local_Authority_(District)'}
+        ],
+        value='Day_of_Week'
+    )
+])
+
+@app.callback(
+    Output('dropdown_parameters', 'figure'),
+    [Input('dropdown', 'value')])
+def update_figure(selected_param):
+
+    filtered_df = uk_acc[selected_param]
+
+    fig_uk = px.scatter_mapbox(uk_acc,
+                            lat=uk_acc["Latitude"],
+                            lon=uk_acc["Longitude"],
+                            color=filtered_df)
+
+    '''
+    fig_us = px.scatter_mapbox(us_acc,
+                            lat=us_acc['LATITUDE'],
+                            lon=us_acc['LONGITUD'],
+                            color=us_acc['DAY_WEEK'])
+
+    fig_us.update_yaxes()
+    fig_us.update_xaxes()
+    fig_us.update_layout(transition_duration=500)
+    '''
+
+    fig_uk.update_yaxes()
+    fig_uk.update_xaxes()
+    fig_uk.update_layout(transition_duration=500)
+
+    return fig_uk
+
+app.run_server(debug=True)
