@@ -1,6 +1,3 @@
-#---------------------------------------------------------------
-# visit http://127.0.0.1:8050/ in your web browser.
-#---------------------------------------------------------------
 import pandas as pd
 import plotly.express as px
 
@@ -16,7 +13,7 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
 path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
 
-uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=500000)
+uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=100000)
 us_acc = pd.read_csv(path_us + "accident.csv")
 
 
