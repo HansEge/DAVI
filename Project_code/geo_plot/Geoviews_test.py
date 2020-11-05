@@ -18,15 +18,15 @@ path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Dataset
 
 # Stationær
 path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\Data\\UK_car_accidents\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\2005\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\CleanedFilesUS\\"
 
 # Daniel path
-path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\US_car_accidents\\2015\\"
-path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK_car_accidents\\"
+# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\US_car_accidents\\2015\\"
+# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK_car_accidents\\"
 
 
 uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=100000)
-us_acc = pd.read_csv(path_us + "ACCIDENT.CSV")
+us_acc = pd.read_csv(path_us + "US_cleaned.csv")
 
 
 # Dash stuff
@@ -53,28 +53,28 @@ app.layout = html.Div([
 def update_figure(selected_param):
 
     filtered_df = uk_acc[selected_param]
-
+    '''
     fig_uk = px.scatter_mapbox(uk_acc,
                             lat=uk_acc["Latitude"],
                             lon=uk_acc["Longitude"],
                             color=filtered_df)
-
     '''
+
     fig_us = px.scatter_mapbox(us_acc,
-                            lat=us_acc['LATITUDE'],
-                            lon=us_acc['LONGITUD'],
-                            color=us_acc['DAY_WEEK'])
+                            lat=us_acc['Latitude'],
+                            lon=us_acc['Longitude'],
+                            color=us_acc['Speed Limit'])
 
     fig_us.update_yaxes()
     fig_us.update_xaxes()
     fig_us.update_layout(transition_duration=500)
-    '''
 
+    '''
     fig_uk.update_yaxes()
     fig_uk.update_xaxes()
     fig_uk.update_layout(transition_duration=500)
-
-    return fig_uk
+    '''
+    return fig_us
 
 
 app.run_server(debug=True)
