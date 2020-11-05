@@ -23,7 +23,7 @@ df = df.dropna()
 # reset index number
 df = df.reset_index()
 
-# Split date after day month year
+# Split date after year, month and day
 day_list = []
 month_list = []
 year_list = []
