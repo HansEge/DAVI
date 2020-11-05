@@ -10,8 +10,14 @@ from dash.dependencies import Input, Output
 
 px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew")
 
-path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
-path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
+# Stinus path
+# path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
+# path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
+
+# Daniel path
+path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\US_car_accidents\\2015\\"
+path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK_car_accidents\\"
+
 
 uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=100000)
 us_acc = pd.read_csv(path_us + "accident.csv")
