@@ -9,31 +9,55 @@ extension = 'csv'
 all_filenames = [i for i in glob.glob('*.{}'.format(extension))]
 df_list = []
 
+index_for_speed = 2009
+
 for f in all_filenames:
     df = pd.read_csv(f)
-    if 'latitude' in df.columns:
-        new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
-                               'Latitude': df['latitude'],
-                               'Longitude': df['longitud'],
-                               'Year': df['YEAR'],
-                               'Month': df['MONTH'],
-                               'Day': df['DAY'],
-                               'Hour': df['HOUR']})
-    else:
-        new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
-                               'Latitude': df['LATITUDE'],
-                               'Longitude': df['LONGITUD'],
-                               'Year': df['YEAR'],
-                               'Month': df['MONTH'],
-                               'Day': df['DAY'],
-                               'Hour': df['HOUR']})
+    if 'YEAR' in df.columns:
+        if df['YEAR'][0] < 2008:
+            new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
+                                   'Latitude': df['latitude'],
+                                   'Longitude': df['longitud'],
+                                   'Year': df['YEAR'],
+                                   'Month': df['MONTH'],
+                                   'Day': df['DAY'],
+                                   'Hour': df['HOUR'],
+                                   'Speed Limit': df['SP_LIMIT']})
 
-    df_list.append(new_df)
+        elif 2007 < df['YEAR'][0] < 2010:
+            new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
+                                   'Latitude': df['LATITUDE'],
+                                   'Longitude': df['LONGITUD'],
+                                   'Year': df['YEAR'],
+                                   'Month': df['MONTH'],
+                                   'Day': df['DAY'],
+                                   'Hour': df['HOUR'],
+                                   'Speed Limit': df['SP_LIMIT']})
+
+        if df['YEAR'][0] > 2009:
+            new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
+                                   'Latitude': df['LATITUDE'],
+                                   'Longitude': df['LONGITUD'],
+                                   'Year': df['YEAR'],
+                                   'Month': df['MONTH'],
+                                   'Day': df['DAY'],
+                                   'Hour': df['HOUR'],})
+        df_list.append(new_df)
+
+    if 'VSPD_LIM' in df.columns:
+        speed_df = pd.DataFrame({'Speed Limit': df['VSPD_LIM']})
+
+        for i in range(len(df_list)):
+            if df_list[i]['Year'][0] > index_for_speed:
+                index_for_speed = index_for_speed + 1
+                df_list[i].insert(7, 'Speed Limit', speed_df['Speed Limit'], True)
+                break
+
 combined_df = pd.concat(df_list, ignore_index=True)
 
 with open('US_cleaned.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['ST_CASE', 'Latitude', 'Longitude', 'Year', 'Month', 'Day', 'Hour'])
+    writer.writerow(['ST_CASE', 'Latitude', 'Longitude', 'Year', 'Month', 'Day', 'Hour', 'Speed Limit'])
     for i in range(len(combined_df)):
         writer.writerow([combined_df['ST_CASE'][i],
                          combined_df['Latitude'][i],
@@ -41,4 +65,5 @@ with open('US_cleaned.csv', 'w', newline='') as file:
                          combined_df['Year'][i],
                          combined_df['Month'][i],
                          combined_df['Day'][i],
-                         combined_df['Hour'][i]])
+                         combined_df['Hour'][i],
+                         combined_df['Speed Limit'][i]])
