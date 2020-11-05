@@ -10,9 +10,15 @@ from dash.dependencies import Input, Output
 
 px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew")
 
-# Stinus path
-# path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
-# path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
+# Bærbar
+'''
+path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
+path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
+'''
+
+# Stationær
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\Data\\UK_car_accidents\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\2005\\"
 
 # Daniel path
 path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\US_car_accidents\\2015\\"
@@ -20,7 +26,7 @@ path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\UK
 
 
 uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=100000)
-us_acc = pd.read_csv(path_us + "accident.csv")
+us_acc = pd.read_csv(path_us + "ACCIDENT.CSV")
 
 
 # Dash stuff
@@ -69,5 +75,6 @@ def update_figure(selected_param):
     fig_uk.update_layout(transition_duration=500)
 
     return fig_uk
+
 
 app.run_server(debug=True)
