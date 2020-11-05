@@ -53,7 +53,10 @@ for f in all_filenames:
                 df_list[i].insert(7, 'Speed Limit', speed_df['Speed Limit'], True)
                 break
 
+# Concat all dataframes from list and drop all NaN rows of dataset
 combined_df = pd.concat(df_list, ignore_index=True)
+combined_df.dropna(inplace=True)
+combined_df = combined_df.reset_index()
 
 with open('US_cleaned.csv', 'w', newline='') as file:
     writer = csv.writer(file)
