@@ -66,10 +66,21 @@ for f in all_filenames:
         # PURE EVIL CANCER!
         car_involved = pd.DataFrame({'BODY_TYP': df['BODY_TYP'],
                                      'ST_CASE': df['ST_CASE']})
-        tmp = car_involved.query('BODY_TYP > 11 or BODY_TYP == 17')['BODY_TYP']
+        tmp = car_involved.query('BODY_TYP > 11')['BODY_TYP']
         car_involved = pd.DataFrame({'Car_involved': tmp.reindex(range(len(car_involved)), fill_value=1)})
         car_involved = car_involved.query('Car_involved < 2').reindex(range(len(car_involved)), fill_value=0)
         car_involved.insert(1, 'ST_CASE', df['ST_CASE'])
+
+        for i in range(len(car_involved)):
+            if car_involved['ST_CASE'][i] == car_involved['ST_CASE'][i+1]:
+                if car_involved['Car_involved'][i] != car_involved['Car_involved'][i+1]:
+                    car_involved.drop(car_involved.index[i], inplace=True)
+
+        m1 = car_involved['ST_CASE'].duplicated(keep=False)
+        m2 = car_involved['Car_involved'] == 0
+
+        car_involved = car_involved[~(m1 & m2)]
+
         car_involved = car_involved.drop_duplicates(subset=('ST_CASE')).reset_index(drop=True)
         car_involved.drop(columns='ST_CASE', inplace=True)
 
