@@ -102,7 +102,7 @@ for f in all_filenames:
         trucks_involved_final = pd.DataFrame(np.zeros((len(trucks_involved.drop_duplicates(
             subset=('ST_CASE')).reset_index(drop=True)),1)), columns=['Truck_involved_in_accident'])
         other_involved_final = pd.DataFrame(np.zeros((len(other_involved.drop_duplicates(
-            subset=('ST_CASE')).reset_index(drop=True)),1)), columns=['Other_involved_in_accident'])
+            subset=('ST_CASE')).reset_index(drop=True)),1)), columns=['Other_vehicle_involved_in_accident'])
 
         #Get all ST_CASE ids
         ids = car_involved.drop_duplicates(subset=('ST_CASE')).reset_index(drop=True)['ST_CASE']
