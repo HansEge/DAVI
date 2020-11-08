@@ -33,7 +33,7 @@ path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Proje
 uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=100000)
 us_acc = pd.read_csv(path_us + "ACCIDENT.CSV")
 '''
-uk_acc = pd.read_csv(path_uk + "testData.csv")
+uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 
 
 # Dash stuff
@@ -41,14 +41,38 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.layout = html.Div([
+# Convert dec
+uk_acc['Car_involved_in_accident'] = uk_acc['Car_involved_in_accident'].astype(str)
+uk_acc['Motorcycle_involved_in_accident'] = uk_acc['Motorcycle_involved_in_accident'].astype(str)
+uk_acc['Truck_involved_in_accident'] = uk_acc['Truck_involved_in_accident'].astype(str)
+uk_acc['Other_vehicle_involved_in_accident'] = uk_acc['Other_vehicle_involved_in_accident'].astype(str)
+
+app.layout = html.Div(plots=[
+    html.Div([
+        html.H1( plots='Hello from plot 1'),
+        dcc.Graph(id='dropdown_parameters'),
+        dcc.Dropdown(
+        id='dropdown',
+        options=[
+            {'label': "Speed Limit", 'value': 'Speed_limit'},
+            {'label': "Car involved in accident", 'value': 'Car_involved_in_accident'},
+            {'label': "Motorcycle involved in accident", 'value': 'Motorcycle_involved_in_accident'},
+            {'label': "Truck involved in accident", 'value': 'Truck_involved_in_accident'},
+            {'label': "Other type of vehicle involved in accident", 'value': 'Other_vehicle_involved_in_accident'}
+        ],
+        value='Car_involved_in_accident')
+
     dcc.Graph(id='dropdown_parameters'),
     dcc.Dropdown(
         id='dropdown',
         options=[
             {'label': "Speed Limit", 'value': 'Speed_limit'},
+            {'label': "Car involved in accident", 'value': 'Car_involved_in_accident'},
+            {'label': "Motorcycle involved in accident", 'value': 'Motorcycle_involved_in_accident'},
+            {'label': "Truck involved in accident", 'value': 'Truck_involved_in_accident'},
+            {'label': "Other type of vehicle involved in accident", 'value': 'Other_vehicle_involved_in_accident'}
         ],
-        value='Speed_limit'
+        value='Car_involved_in_accident'
     )
 ])
 
@@ -60,20 +84,16 @@ def update_figure(selected_param):
     filtered_df = uk_acc[selected_param]
 
     fig_uk = px.scatter_mapbox(uk_acc,
-                            lat=uk_acc["Latitude"],
-                            lon=uk_acc["Longitude"],
-                            color=filtered_df)
-
-    '''
-    fig_us = px.scatter_mapbox(us_acc,
-                            lat=us_acc['LATITUDE'],
-                            lon=us_acc['LONGITUD'],
-                            color=us_acc['DAY_WEEK'])
-
-    fig_us.update_yaxes()
-    fig_us.update_xaxes()
-    fig_us.update_layout(transition_duration=500)
-    '''
+                               lat=uk_acc["Latitude"],
+                               lon=uk_acc["Longitude"],
+                               color=filtered_df,
+                               color_continuous_scale= px.colors.sequential.Viridis,
+                               color_discrete_sequence= px.colors.qualitative.G10,
+                               width=1000,
+                               height=900,
+                               zoom= 5,
+                               center= dict(lat=54.832621, lon=-4.577778)
+                               )
 
     fig_uk.update_yaxes()
     fig_uk.update_xaxes()
