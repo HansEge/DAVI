@@ -47,38 +47,73 @@ uk_acc['Motorcycle_involved_in_accident'] = uk_acc['Motorcycle_involved_in_accid
 uk_acc['Truck_involved_in_accident'] = uk_acc['Truck_involved_in_accident'].astype(str)
 uk_acc['Other_vehicle_involved_in_accident'] = uk_acc['Other_vehicle_involved_in_accident'].astype(str)
 
-app.layout = html.Div(plots=[
+app.layout = html.Div([
     html.Div([
-        html.H1( plots='Hello from plot 1'),
-        dcc.Graph(id='dropdown_parameters'),
-        dcc.Dropdown(
-        id='dropdown',
-        options=[
-            {'label': "Speed Limit", 'value': 'Speed_limit'},
-            {'label': "Car involved in accident", 'value': 'Car_involved_in_accident'},
-            {'label': "Motorcycle involved in accident", 'value': 'Motorcycle_involved_in_accident'},
-            {'label': "Truck involved in accident", 'value': 'Truck_involved_in_accident'},
-            {'label': "Other type of vehicle involved in accident", 'value': 'Other_vehicle_involved_in_accident'}
-        ],
-        value='Car_involved_in_accident')
 
-    dcc.Graph(id='dropdown_parameters'),
-    dcc.Dropdown(
-        id='dropdown',
-        options=[
-            {'label': "Speed Limit", 'value': 'Speed_limit'},
-            {'label': "Car involved in accident", 'value': 'Car_involved_in_accident'},
-            {'label': "Motorcycle involved in accident", 'value': 'Motorcycle_involved_in_accident'},
-            {'label': "Truck involved in accident", 'value': 'Truck_involved_in_accident'},
-            {'label': "Other type of vehicle involved in accident", 'value': 'Other_vehicle_involved_in_accident'}
-        ],
-        value='Car_involved_in_accident'
-    )
-])
+        html.H3('Map of United Kingdom'),
+        dcc.Graph(id='UK_graph', style={'display': 'internal-block'}),
+        dcc.Dropdown(
+            id='UK_plot',
+            style={'height': '30px', 'width': '900px'},
+            options=[
+                {'label': "Speed Limit", 'value': 'Speed_limit'},
+                {'label': "Car involved in accident", 'value': 'Car_involved_in_accident'},
+                {'label': "Motorcycle involved in accident", 'value': 'Motorcycle_involved_in_accident'},
+                {'label': "Truck involved in accident", 'value': 'Truck_involved_in_accident'},
+                {'label': "Other type of vehicle involved in accident", 'value': 'Other_vehicle_involved_in_accident'}
+            ],
+            value='Car_involved_in_accident')
+        ]),
+
+
+    html.Div([
+        html.Div([
+            html.H3('Map of United States of America'),
+            dcc.Graph(id='US_graph', style={'display': 'internal-block'}),
+            dcc.Dropdown(
+                id='US_plot',
+                style={'height': '30px', 'width': '900px'},
+                options=[
+                    {'label': "Speed Limit", 'value': 'Speed_limit'},
+                    {'label': "Car involved in accident", 'value': 'Car_involved_in_accident'},
+                    {'label': "Motorcycle involved in accident", 'value': 'Motorcycle_involved_in_accident'},
+                    {'label': "Truck involved in accident", 'value': 'Truck_involved_in_accident'},
+                    {'label': "Other type of vehicle involved in accident", 'value': 'Other_vehicle_involved_in_accident'}
+                ],
+                value='Car_involved_in_accident')
+            ]),
+        ]),
+    ])
+
 
 @app.callback(
-    Output('dropdown_parameters', 'figure'),
-    [Input('dropdown', 'value')])
+    Output('UK_graph', 'figure'),
+    [Input('UK_plot', 'value')])
+def update_figure(selected_param):
+
+    filtered_df = uk_acc[selected_param]
+
+    fig_uk = px.scatter_mapbox(uk_acc,
+                               lat=uk_acc["Latitude"],
+                               lon=uk_acc["Longitude"],
+                               color=filtered_df,
+                               color_continuous_scale= px.colors.sequential.Viridis,
+                               color_discrete_sequence= px.colors.qualitative.G10,
+                               width=1000,
+                               height=900,
+                               zoom= 5,
+                               center= dict(lat=54.832621, lon=-4.577778)
+                               )
+
+    fig_uk.update_yaxes()
+    fig_uk.update_xaxes()
+    fig_uk.update_layout(transition_duration=500)
+
+    return fig_uk
+
+@app.callback(
+    Output('US_graph', 'figure'),
+    [Input('US_plot', 'value')])
 def update_figure(selected_param):
 
     filtered_df = uk_acc[selected_param]
