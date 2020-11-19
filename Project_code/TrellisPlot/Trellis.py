@@ -14,15 +14,15 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
-path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
+# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
+# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
 
 # Stinus path
-# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\Data\\UK_car_accidents\\"
-# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\CleanedFilesUS\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\Data\\UK_car_accidents\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\CleanedFilesUS\\"
 
 #uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
-uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
+uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
 
 # Convert dec
@@ -40,28 +40,40 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-variables = ['Vehicle type', 'Speed Limit', 'Number of cars involed', 'Year']
+variables = ['Vehicle type', 'Speed Limit', 'Number of vehicles in accident', 'Year']
 
 app.layout = html.Div([
     html.Div([
         html.H3('Map of US'),
-        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={}),
+        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+    ]),
+    html.Div([
         dcc.Dropdown(
-            id='US_plot',
+            id='US_plot_x',
             style={'height': '30px', 'width': '900px'},
             options=[{'label': i, 'value': i} for i in variables],
-            value=variables,
-            multi=True
+            placeholder='Pick one',
+            value=variables[2]
+
         ),
-    ])
+        dcc.Dropdown(
+            id='US_plot_y',
+            style={'height': '30px', 'width': '900px'},
+            options=[{'label': i, 'value': i} for i in variables],
+            placeholder='Pick one',
+            value=variables[1]
+        ),
+    ],
+    style={'width': '48%', 'display': 'inline-block'})
 ])
+
 
 def switcher(arg):
     switch = {
         'Vehicle type': ['Car_involved_in_accident', 'Motorcycle_involved_in_accident',
                          'Truck_involved_in_accident', 'Other_involved_in_accident'],
         'Speed Limit': 'Speed Limit',
-        'Number of cars involed': 'Number of cars involed',
+        'Number of vehicles in accident': 'Number of vehicles in accident',
         'Year': 'Year'
     }
     return switch[arg]
@@ -69,10 +81,16 @@ def switcher(arg):
 
 @app.callback(
     Output('US_graph', 'figure'),
-    [Input('US_plot', 'value')])
-def update_figure(selected_param):
+    [Input('US_plot_x', 'value'),
+     Input('US_plot_y', 'value')])
+def update_figure(us_plot_x, us_plot_y):
 
-    params = [switcher(i) for i in selected_param]
+    x_params = switcher(us_plot_x)
+    y_params = switcher(us_plot_y)
+
+    if len(x_params) != 1 or len(y_params) != 1:
+        # Todo: code condition to handle vehicle type
+        pass
 
     fig = make_subplots(
         rows=2, cols=2,
@@ -82,13 +100,13 @@ def update_figure(selected_param):
 
     fig.add_trace(
         go.Scattermapbox(
-            lat=us_acc.loc[(us_acc[params[0][0]] == 1)]['Latitude'],
-            lon=us_acc.loc[(us_acc[params[0][0]] == 1)]['Longitude'],
+            lat=us_acc.loc[(us_acc[x_params] == 1)]['Latitude'],
+            lon=us_acc.loc[(us_acc[x_params] == 1)]['Longitude'],
             mode='markers',
-            text=us_acc.loc[(us_acc[params[0][0]] == 1)],
+            text=us_acc.loc[(us_acc[x_params] == 1)],
             marker=go.scattermapbox.Marker(
                 size=4,
-                color=us_acc.loc[(us_acc[params[0][0]] == 1)][selected_param[3]]
+                color=us_acc.loc[(us_acc[x_params] == 1)][y_params]
             )),
         row=1, col=1
     )
