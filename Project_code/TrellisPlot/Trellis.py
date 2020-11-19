@@ -98,6 +98,11 @@ def update_figure(selected_param):
         row=1,
         col=2
     )
+
+    # Set size of plots in pixels
+    fig.layout.height=1200
+    fig.layout.width=1200
+
     fig.update_layout(
         autosize=False,
         hovermode='closest',
