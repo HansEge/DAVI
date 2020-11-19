@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from collections import Counter
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -40,7 +42,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-variables = ['Vehicle type', 'Speed Limit', 'Number of cars involed', 'Year']
+variables = ['Vehicle type','Speed Limit', 'Number of cars involed', 'Year']
 
 app.layout = html.Div([
     html.Div([
@@ -50,7 +52,7 @@ app.layout = html.Div([
             id='US_plot',
             style={'height': '30px', 'width': '900px'},
             options=[{'label': i, 'value': i} for i in variables],
-            value=variables,
+            value=0,
             multi=True
         ),
     ])
@@ -61,7 +63,7 @@ def switcher(arg):
         'Vehicle type': ['Car_involved_in_accident', 'Motorcycle_involved_in_accident',
                          'Truck_involved_in_accident', 'Other_involved_in_accident'],
         'Speed Limit': 'Speed Limit',
-        'Number of cars involed': 'Number of cars involed',
+        'Number of cars involed': 'Number of vehicles in accident',
         'Year': 'Year'
     }
     return switch[arg]
@@ -74,13 +76,36 @@ def update_figure(selected_param):
 
     params = [switcher(i) for i in selected_param]
 
-    fig = make_subplots(
-        rows=2, cols=2,
-        specs=[[{"type": "mapbox"}, {"type": "mapbox"}],
-               [{"type": "mapbox"}, {"type": "mapbox"}]]
-    )
+    if len(params) == 1:
+        # dynamically estimate number of columns
+        n_columns = set(us_acc[params[1]])
+        # number_of_values = Counter(us_acc[params[1]]).values()
+    elif len(params) == 2:
+        # dynamically estimate number of columns
+        n_columns = len(set(us_acc[params[0]]))
 
-    fig.add_trace(
+        # dynamically estimate number of rows
+        n_rows = len(set(us_acc[params[1]]))
+        # number_of_values = Counter(us_acc[params[0]]).values()
+
+        # make specs_matrix in right dimensions
+        specs_matrix = []
+        for x in range(n_rows):
+            innerlist = []
+            for y in range(n_columns):
+                innerlist.append({"type": "mapbox"})
+            specs_matrix.append(innerlist)
+
+
+    fig = make_subplots(
+        rows=n_rows, cols=n_columns,
+
+
+        specs = specs_matrix
+        #specs=[[{"type": "mapbox"}, {"type": "mapbox"}],
+        #       [{"type": "mapbox"}, {"type": "mapbox"}]]
+    )
+    '''fig.add_trace(
         go.Scattermapbox(
             lat=us_acc.loc[(us_acc[params[0][0]] == 1)]['Latitude'],
             lon=us_acc.loc[(us_acc[params[0][0]] == 1)]['Longitude'],
@@ -103,7 +128,13 @@ def update_figure(selected_param):
             )),
         row=1,
         col=2
-    )
+    )'''
+
+
+    # Set size of plots in pixels
+    fig.layout.height=1200
+    fig.layout.width=1200
+
     fig.update_layout(
         autosize=False,
         hovermode='closest',
