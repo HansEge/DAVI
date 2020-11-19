@@ -40,7 +40,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-variables = ['Vehicle type', 'Speed Limit', 'Number of vehicles in accident', 'Year']
+variables = ['Vehicle type', 'Speed Limit', 'Number of vehicles in accident', 'Year', 'Motorcycle_involved_in_accident']
 
 app.layout = html.Div([
     html.Div([
@@ -53,7 +53,7 @@ app.layout = html.Div([
             style={'height': '30px', 'width': '900px'},
             options=[{'label': i, 'value': i} for i in variables],
             placeholder='Pick one',
-            value=variables[2]
+            value=variables[4]
 
         ),
         dcc.Dropdown(
@@ -61,7 +61,7 @@ app.layout = html.Div([
             style={'height': '30px', 'width': '900px'},
             options=[{'label': i, 'value': i} for i in variables],
             placeholder='Pick one',
-            value=variables[1]
+            value=variables[3]
         ),
     ],
     style={'width': '48%', 'display': 'inline-block'})
@@ -74,7 +74,8 @@ def switcher(arg):
                          'Truck_involved_in_accident', 'Other_involved_in_accident'],
         'Speed Limit': 'Speed Limit',
         'Number of vehicles in accident': 'Number of vehicles in accident',
-        'Year': 'Year'
+        'Year': 'Year',
+        'Motorcycle_involved_in_accident': 'Motorcycle_involved_in_accident'
     }
     return switch[arg]
 
@@ -92,36 +93,41 @@ def update_figure(us_plot_x, us_plot_y):
         # Todo: code condition to handle vehicle type
         pass
 
+    # dynamically estimate number of columns
+    n_columns = len(set(us_acc[x_params]))
+
+    # dynamically estimate number of rows
+    n_rows = len(set(us_acc[y_params]))
+    # number_of_values = Counter(us_acc[params[0]]).values()
+
+    # make specs_matrix in right dimensions
+    specs_matrix = []
+    for x in range(n_rows):
+        innerlist = []
+        for y in range(n_columns):
+            innerlist.append({"type": "mapbox"})
+        specs_matrix.append(innerlist)
+
     fig = make_subplots(
-        rows=2, cols=2,
-        specs=[[{"type": "mapbox"}, {"type": "mapbox"}],
-               [{"type": "mapbox"}, {"type": "mapbox"}]]
+        rows=n_rows, cols=n_columns,
+        specs=specs_matrix
     )
 
-    fig.add_trace(
-        go.Scattermapbox(
-            lat=us_acc.loc[(us_acc[x_params] == 1)]['Latitude'],
-            lon=us_acc.loc[(us_acc[x_params] == 1)]['Longitude'],
-            mode='markers',
-            text=us_acc.loc[(us_acc[x_params] == 1)],
-            marker=go.scattermapbox.Marker(
-                size=4,
-                color=us_acc.loc[(us_acc[x_params] == 1)][y_params]
-            )),
-        row=1, col=1
-    )
-    fig.add_trace(
-        go.Scattermapbox(
-            lat=us_acc.loc[us_acc['Motorcycle_involved_in_accident'] == 1]['Latitude'],
-            lon=us_acc.loc[us_acc['Motorcycle_involved_in_accident'] == 1]['Longitude'],
-            mode='markers',
-            marker=go.scattermapbox.Marker(
-                size=4,
-                color=us_acc.loc[us_acc['Motorcycle_involved_in_accident'] == 1]['Speed Limit']
-            )),
-        row=1,
-        col=2
-    )
+    for i in range(n_rows):
+        for k in range(n_columns):
+
+            fig.add_trace(
+                go.Scattermapbox(
+                    lat=us_acc.loc[((us_acc[y_params] == 2005+i) & (us_acc[x_params] == k))]['Latitude'],
+                    lon=us_acc.loc[((us_acc[y_params] == 2005+i) & (us_acc[x_params] == k))]['Longitude'],
+                    mode='markers',
+                    # text=us_acc.loc[(us_acc[x_params] == 1)],
+                    marker=go.scattermapbox.Marker(
+                        size=4,
+                    )),
+                row=i+1, col=k+1
+            )
+
 
     # Set size of plots in pixels
     fig.layout.height=1200
