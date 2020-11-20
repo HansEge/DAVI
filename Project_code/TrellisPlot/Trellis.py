@@ -18,11 +18,12 @@ mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeG
 # path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\Data\\UK_car_accidents\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\Data\\US_car_accidents\\CleanedFilesUS\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+
 
 #uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
-uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
+uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
 
 # Convert dec
@@ -90,7 +91,7 @@ def update_figure(us_plot_x, us_plot_y):
     y_params = switcher(us_plot_y)
 
     if len(x_params) != 1 or len(y_params) != 1:
-        # Todo: code condition to handle vehicle type
+        # Todo: code condition to handle vehicle type and other stuff
         pass
 
     # dynamically estimate number of columns
