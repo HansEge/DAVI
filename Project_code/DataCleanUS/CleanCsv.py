@@ -16,8 +16,13 @@ index_for_speed = 2009
 for f in all_filenames:
     df = pd.read_csv(f)
     # Get stuff from ACCIDENT.CSV
+
+    print('Reading from', f)
+
     if 'YEAR' in df.columns:
         if df['YEAR'][0] < 2008:
+
+            # Extract month and group into quarters
             months = pd.DataFrame({'Months': df['MONTH'], 'Acc_index': df['ST_CASE']})
             q1 = months.query('Months < 4')['Months']
             q2 = months.query('Months > 3 and Months < 7')['Months']
@@ -33,6 +38,7 @@ for f in all_filenames:
             quarters = pd.DataFrame({'Quarters': pd.concat(frames)})
             quarters = quarters.reindex(range(len(quarters)))
 
+            # Extract hour and group into time of day(0-2)
             t_day = pd.DataFrame({'T_day': df['HOUR'], 'Acc_index': df['ST_CASE']})
             t_0 = t_day.query('T_day > 21 or T_day >= 0 and T_day < 6')['T_day']
             t_1 = t_day.query('T_day > 5 and T_day < 14')['T_day']
@@ -45,6 +51,20 @@ for f in all_filenames:
             frames = [t_0, t_1, t_2]
             t_day = pd.DataFrame({'T_day': pd.concat(frames)})
             t_day = t_day.reindex(range(len(t_day)))
+
+            # Extract speed limit and group into low, medium and high
+            speed_limit = pd.DataFrame({'Speed_limit': df['SP_LIMIT']})
+            s_0 = speed_limit.query('Speed_limit < 36')['Speed_limit']
+            s_1 = speed_limit.query('Speed_limit > 35 and Speed_limit < 60')['Speed_limit']
+            s_2 = speed_limit.query('Speed_limit > 59 and Speed_limit < 99')['Speed_limit']
+
+            s_0.replace(s_0.unique(), 0, inplace=True)
+            s_1.replace(s_1.unique(), 1, inplace=True)
+            s_2.replace(s_2.unique(), 2, inplace=True)
+
+            frames = [s_0, s_1, s_2]
+            speed_limit = pd.DataFrame({'Speed_limit': pd.concat(frames)})
+            speed_limit = speed_limit.reindex(range(len(speed_limit)))
 
             new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
                                    'Latitude': df['latitude'],
@@ -52,10 +72,12 @@ for f in all_filenames:
                                    'Year': df['YEAR'],
                                    'Quarter': quarters['Quarters'],
                                    'T_day': t_day['T_day'],
-                                   'Speed Limit': df['SP_LIMIT'],
+                                   'Speed_limit': speed_limit['Speed_limit'],
                                    'Day': df['DAY']})
 
         elif 2007 < df['YEAR'][0] < 2010:
+
+            # Extract month and group into quarters
             months = pd.DataFrame({'Months': df['MONTH'], 'Acc_index': df['ST_CASE']})
             q1 = months.query('Months < 4')['Months']
             q2 = months.query('Months > 3 and Months < 7')['Months']
@@ -71,6 +93,7 @@ for f in all_filenames:
             quarters = pd.DataFrame({'Quarters': pd.concat(frames)})
             quarters = quarters.reindex(range(len(quarters)))
 
+            # Extract hour and group into time of day(0-2)
             t_day = pd.DataFrame({'T_day': df['HOUR'], 'Acc_index': df['ST_CASE']})
             t_0 = t_day.query('T_day > 21 or T_day >= 0 and T_day < 6')['T_day']
             t_1 = t_day.query('T_day > 5 and T_day < 14')['T_day']
@@ -83,6 +106,20 @@ for f in all_filenames:
             frames = [t_0, t_1, t_2]
             t_day = pd.DataFrame({'T_day': pd.concat(frames)})
             t_day = t_day.reindex(range(len(t_day)))
+
+            # Extract speed limit and group into low, medium and high
+            speed_limit = pd.DataFrame({'Speed_limit': df['SP_LIMIT']})
+            s_0 = speed_limit.query('Speed_limit < 36')['Speed_limit']
+            s_1 = speed_limit.query('Speed_limit > 35 and Speed_limit < 60')['Speed_limit']
+            s_2 = speed_limit.query('Speed_limit > 59 and Speed_limit < 99')['Speed_limit']
+
+            s_0.replace(s_0.unique(), 0, inplace=True)
+            s_1.replace(s_1.unique(), 1, inplace=True)
+            s_2.replace(s_2.unique(), 2, inplace=True)
+
+            frames = [s_0, s_1, s_2]
+            speed_limit = pd.DataFrame({'Speed_limit': pd.concat(frames)})
+            speed_limit = speed_limit.reindex(range(len(speed_limit)))
 
             new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
                                    'Latitude': df['LATITUDE'],
@@ -90,10 +127,12 @@ for f in all_filenames:
                                    'Year': df['YEAR'],
                                    'Quarter': quarters['Quarters'],
                                    'T_day': t_day['T_day'],
-                                   'Speed Limit': df['SP_LIMIT'],
+                                   'Speed_limit': speed_limit['Speed_limit'],
                                    'Day': df['DAY']})
 
         if df['YEAR'][0] > 2009:
+
+            # Extract month and group into quarters
             months = pd.DataFrame({'Months': df['MONTH'], 'Acc_index': df['ST_CASE']})
             q1 = months.query('Months < 4')['Months']
             q2 = months.query('Months > 3 and Months < 7')['Months']
@@ -109,6 +148,7 @@ for f in all_filenames:
             quarters = pd.DataFrame({'Quarters': pd.concat(frames)})
             quarters = quarters.reindex(range(len(quarters)))
 
+            # Extract hour and group into time of day(0-2)
             t_day = pd.DataFrame({'T_day': df['HOUR'], 'Acc_index': df['ST_CASE']})
             t_0 = t_day.query('T_day > 21 or T_day >= 0 and T_day < 6')['T_day']
             t_1 = t_day.query('T_day > 5 and T_day < 14')['T_day']
@@ -121,6 +161,9 @@ for f in all_filenames:
             frames = [t_0, t_1, t_2]
             t_day = pd.DataFrame({'T_day': pd.concat(frames)})
             t_day = t_day.reindex(range(len(t_day)))
+
+
+
 
             new_df = pd.DataFrame({'ST_CASE': df['ST_CASE'],
                                    'Latitude': df['LATITUDE'],
@@ -133,13 +176,27 @@ for f in all_filenames:
 
     # Get stuff from VEHICLES.CSV
     if 'VEH_NO' in df.columns:
-        # Due to FARS changing datastructure in from 2009-14 :(
+        # Due to FARS changing datastructure from 2009-14 speed limit must be obtained from VEHICLES.CSV :(
         if 'VSPD_LIM' in df.columns:
-            speed_df = pd.DataFrame({'Speed Limit': df['VSPD_LIM']})
+            speed_limit = pd.DataFrame({'Speed_limit': df['VSPD_LIM']})
+
+            s_0 = speed_limit.query('Speed_limit < 36')['Speed_limit']
+            s_1 = speed_limit.query('Speed_limit > 35 and Speed_limit < 60')['Speed_limit']
+            s_2 = speed_limit.query('Speed_limit > 59 and Speed_limit < 99')['Speed_limit']
+
+            s_0.replace(s_0.unique(), 0, inplace=True)
+            s_1.replace(s_1.unique(), 1, inplace=True)
+            s_2.replace(s_2.unique(), 2, inplace=True)
+
+            frames = [s_0, s_1, s_2]
+            speed_limit = pd.DataFrame({'Speed_limit': pd.concat(frames)})
+            speed_limit = speed_limit.reindex(range(len(speed_limit)))
+
+
             for i in range(len(df_list)):
                 if df_list[i]['Year'][0] > index_for_speed:
                     index_for_speed = index_for_speed + 1
-                    df_list[i].insert(7, 'Speed Limit', speed_df['Speed Limit'], True)
+                    df_list[i].insert(7, 'Speed_limit', speed_limit['Speed_limit'], True)
 
         # Extract number of vehicles in each accident
         veh_in_acc = pd.DataFrame({'NO_VEH': df['ST_CASE']})
@@ -209,7 +266,7 @@ for f in all_filenames:
                 if other_involved[other_involved.ST_CASE == id].iloc[k]['Other_involved'] != 0:
                     other_involved_final.at[i, 'Other_involved_in_accident'] = 1
 
-        print("Done with ", f)
+        print("Done with", f)
 
         # Add stuff to dataframe list
         for i in range(len(df_list)):
@@ -236,7 +293,7 @@ with open('US_cleaned.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Acc_index', 'Lat', 'Lon', 'Num_veh_acc', 'Car_acc',
                      'Mc_acc', 'Truck_acc', 'Other_acc',
-                     'Year', 'Quarter', 'T_day', 'Speed Limit'])
+                     'Year', 'Quarter', 'T_day', 'Speed_limit'])
     for i in range(len(combined_df)):
         writer.writerow([combined_df['ST_CASE'][i],
                          combined_df['Latitude'][i],
@@ -249,5 +306,5 @@ with open('US_cleaned.csv', 'w', newline='') as file:
                          combined_df['Year'][i],
                          combined_df['Quarter'][i],
                          combined_df['T_day'][i],
-                         combined_df['Speed Limit'][i]]
+                         combined_df['Speed_limit'][i]]
                         )
