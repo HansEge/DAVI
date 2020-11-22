@@ -44,6 +44,8 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 variables = ['Quarter', 'Time of day', 'Speed Limit']
+color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Truck involved in accident',
+             'Other vehicle involved in accident']
 
 str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
@@ -52,13 +54,13 @@ str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
 app.layout = html.Div([
     html.Div([
-        html.H3('Map of US'),
-        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+        html.H3('Map of UK'),
+        dcc.Graph(id='UK_graph', style={'display': 'internal-block'}, figure={})
     ]),
     html.Div(
         [
             dcc.Dropdown(
-                id='US_plot_x',
+                id='UK_plot_x',
                 options=[{'label': i, 'value': i} for i in variables],
                 placeholder='Pick one',
                 value=variables[1],
@@ -72,7 +74,7 @@ app.layout = html.Div([
     html.Div(
         [
             dcc.Dropdown(
-                id='US_plot_y',
+                id='UK_plot_y',
                 options=[{'label': i, 'value': i} for i in variables],
                 placeholder='Pick one',
                 value=variables[2],
@@ -83,6 +85,22 @@ app.layout = html.Div([
         ],
         style=dict(display='flex')
     ),
+
+    html.Div(
+        [
+            dcc.Dropdown(
+                id='UK_color',
+                options=[{'label': i, 'value': i} for i in color_var],
+                placeholder='Pick one',
+                value=color_var[0],
+                style=dict(width='40%',
+                           display='inline-block',
+                           verticalAlign="middle")
+            )
+        ],
+        style=dict(display='flex')
+    ),
+
     html.Div(
         [
             dcc.RangeSlider(
@@ -106,20 +124,26 @@ def switcher(arg):
     switch = {
         'Quarter': ['Quarter', str_quarter_titles],
         'Speed Limit': ['Speed_limit', str_speed_limit_titles],
-        'Time of day': ['T_day', str_T_day_titles]
+        'Time of day': ['T_day', str_T_day_titles],
+        'Car involved in accident': 'Car_acc',
+        'Motorcycle involved in accident': 'Mc_acc',
+        'Truck involved in accident': 'Truck_acc',
+        'Other vehicle involved in accident': 'Other_acc'
     }
     return switch[arg]
 
 
 @app.callback(
-    Output('US_graph', 'figure'),
-    [Input('US_plot_x', 'value'),
-     Input('US_plot_y', 'value'),
+    Output('UK_graph', 'figure'),
+    [Input('UK_plot_x', 'value'),
+     Input('UK_plot_y', 'value'),
+     Input('UK_color', 'value'),
      Input('year-range-slider', 'value')])
-def update_figure(uk_plot_x, uk_plot_y, years_slider):
+def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
     x_params = switcher(uk_plot_x)
     y_params = switcher(uk_plot_y)
     years = years_slider
+    uk_color = switcher(uk_color)
 
     if len(x_params[0]) != 1 or len(y_params[0]) != 1:
         # Todo: code condition to handle vehicle type
@@ -168,11 +192,13 @@ def update_figure(uk_plot_x, uk_plot_y, years_slider):
                                     (uk_acc['Year'] <= max(years)))
                                     )]['Lon'],
                     mode='markers',
+                    text=uk_acc["Num_veh_acc"],
                     # text=us_acc.loc[(us_acc[x_params] == 1)],
 
                     marker=go.scattermapbox.Marker(
-                        size=uk_acc["Num_veh_acc"]+1,
-                        color=uk_acc["Car_acc"]
+                        size=uk_acc["Num_veh_acc"]+2,
+                        colorscale=[[0, 'rgb(50,50,50)'], [1, 'rgb(255,0,0)']],
+                        color=uk_acc[uk_color]
                     )),
                 row=i+1, col=k+1
             )
