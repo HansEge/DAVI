@@ -43,7 +43,12 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-variables = ['Quarter', 'Time of day', 'Year', 'Speed Limit']
+variables = ['Quarter', 'Time of day', 'Speed Limit']
+
+str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
+str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
+str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
+
 
 app.layout = html.Div([
     html.Div([
@@ -56,7 +61,7 @@ app.layout = html.Div([
             style={'height': '30px', 'width': '900px'},
             options=[{'label': i, 'value': i} for i in variables],
             placeholder='Pick one',
-            value=variables[3]
+            value=variables[2]
 
         ),
         dcc.Dropdown(
@@ -73,10 +78,9 @@ app.layout = html.Div([
 
 def switcher(arg):
     switch = {
-        'Quarter': 'Quarter',
-        'Speed Limit': 'Speed_limit',
-        'Time of day': 'T_day',
-        'Year': 'Year'
+        'Quarter': ['Quarter', str_quarter_titles],
+        'Speed Limit': ['Speed_limit', str_speed_limit_titles],
+        'Time of day': ['T_day', str_T_day_titles]
     }
     return switch[arg]
 
@@ -90,15 +94,15 @@ def update_figure(us_plot_x, us_plot_y):
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
 
-    if len(x_params) != 1 or len(y_params) != 1:
+    if len(x_params[0]) != 1 or len(y_params[0]) != 1:
         # Todo: code condition to handle vehicle type
         pass
 
     # dynamically estimate number of columns
-    n_columns = len(set(uk_acc[x_params]))
+    n_columns = len(set(uk_acc[x_params[0]]))
 
     # dynamically estimate number of rows
-    n_rows = len(set(uk_acc[y_params]))
+    n_rows = len(set(uk_acc[y_params[0]]))
     # number_of_values = Counter(us_acc[params[0]]).values()
 
     # make specs_matrix in right dimensions
@@ -112,10 +116,12 @@ def update_figure(us_plot_x, us_plot_y):
     fig = make_subplots(
         rows=n_rows, cols=n_columns,
         specs=specs_matrix,
-        shared_xaxes=True,
+        shared_xaxes=False,
         shared_yaxes=True,
         horizontal_spacing=0.01,
-        vertical_spacing=0.01
+        vertical_spacing=0.01,
+        column_titles=x_params[1],
+        row_titles=y_params[1]
     )
 
 
@@ -123,32 +129,21 @@ def update_figure(us_plot_x, us_plot_y):
         for k in range(n_columns):
 
             fig.add_trace(
+                # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
                 go.Scattermapbox(
-                    lat=uk_acc.loc[((uk_acc[y_params] == i) & (uk_acc[x_params] == k))]['Lat'],
-                    lon=uk_acc.loc[((uk_acc[y_params] == i) & (uk_acc[x_params] == k))]['Lon'],
+                    lat=uk_acc.loc[((uk_acc[y_params[0]] == i) & (uk_acc[x_params[0]] == k))]['Lat'],
+                    lon=uk_acc.loc[((uk_acc[y_params[0]] == i) & (uk_acc[x_params[0]] == k))]['Lon'],
                     mode='markers',
                     # text=us_acc.loc[(us_acc[x_params] == 1)],
 
                     marker=go.scattermapbox.Marker(
-                        size=4,
+                        size=uk_acc["Num_veh_acc"]+1,
+                        color=uk_acc["Car_acc"],
+                        autocolorscale=True
+
                     )),
                 row=i+1, col=k+1
             )
-
-
-
-    '''fig.add_trace(
-        go.Scattermapbox(
-            lat=uk_acc.loc[((uk_acc[y_params] == 1) & (uk_acc[x_params] == 1))]['Lat'],
-            lon=uk_acc.loc[((uk_acc[y_params] == 1) & (uk_acc[x_params] == 1))]['Lon'],
-            mode='markers',
-            # text=us_acc.loc[(us_acc[x_params] == 1)],
-            marker=go.scattermapbox.Marker(
-                size=4,
-            )),
-        row=1, col=1
-    )'''
-
 
     # Set size of plots in pixels
     fig.layout.height=1500
