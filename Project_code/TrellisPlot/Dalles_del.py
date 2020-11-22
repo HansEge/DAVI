@@ -55,24 +55,50 @@ app.layout = html.Div([
         html.H3('Map of US'),
         dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
     ]),
-    html.Div([
-        dcc.Dropdown(
-            id='US_plot_x',
-            style={'height': '30px', 'width': '900px'},
-            options=[{'label': i, 'value': i} for i in variables],
-            placeholder='Pick one',
-            value=variables[2]
+    html.Div(
+        [
+            dcc.Dropdown(
+                id='US_plot_x',
+                options=[{'label': i, 'value': i} for i in variables],
+                placeholder='Pick one',
+                value=variables[1],
+                style=dict(width='40%',
+                           verticalAlign="middle")
+            )
+        ],
+        style=dict(display='flex')
+    ),
 
-        ),
-        dcc.Dropdown(
-            id='US_plot_y',
-            style={'height': '30px', 'width': '900px'},
-            options=[{'label': i, 'value': i} for i in variables],
-            placeholder='Pick one',
-            value=variables[1]
-        ),
-    ],
-    style={'width': '48%', 'display': 'inline-block'})
+    html.Div(
+        [
+            dcc.Dropdown(
+                id='US_plot_y',
+                options=[{'label': i, 'value': i} for i in variables],
+                placeholder='Pick one',
+                value=variables[2],
+                style=dict(width='40%',
+                           display='inline-block',
+                           verticalAlign="middle")
+            )
+        ],
+        style=dict(display='flex')
+    ),
+    html.Div(
+        [
+            dcc.RangeSlider(
+                id='year-range-slider',
+                min=2005,
+                max=2014,
+                step=1,
+                value=[2005, 2006],
+                tooltip=(dict(placement='bottom')),
+                marks={2005: '2005',
+                       2014: '2014'}
+
+            ),
+            html.Div(id='output-container-range-slider')
+        ]
+    )
 ])
 
 
@@ -88,11 +114,12 @@ def switcher(arg):
 @app.callback(
     Output('US_graph', 'figure'),
     [Input('US_plot_x', 'value'),
-     Input('US_plot_y', 'value')])
-def update_figure(us_plot_x, us_plot_y):
-
-    x_params = switcher(us_plot_x)
-    y_params = switcher(us_plot_y)
+     Input('US_plot_y', 'value'),
+     Input('year-range-slider', 'value')])
+def update_figure(uk_plot_x, uk_plot_y, years_slider):
+    x_params = switcher(uk_plot_x)
+    y_params = switcher(uk_plot_y)
+    years = years_slider
 
     if len(x_params[0]) != 1 or len(y_params[0]) != 1:
         # Todo: code condition to handle vehicle type
@@ -127,20 +154,25 @@ def update_figure(us_plot_x, us_plot_y):
 
     for i in range(n_rows):
         for k in range(n_columns):
-
             fig.add_trace(
                 # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
                 go.Scattermapbox(
-                    lat=uk_acc.loc[((uk_acc[y_params[0]] == i) & (uk_acc[x_params[0]] == k))]['Lat'],
-                    lon=uk_acc.loc[((uk_acc[y_params[0]] == i) & (uk_acc[x_params[0]] == k))]['Lon'],
+                    lat=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                    (uk_acc[x_params[0]] == k) &
+                                    ((uk_acc['Year'] >= min(years)) &
+                                    (uk_acc['Year'] <= max(years)))
+                                    )]['Lat'],
+                    lon=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                    (uk_acc[x_params[0]] == k) &
+                                    ((uk_acc['Year'] >= min(years)) &
+                                    (uk_acc['Year'] <= max(years)))
+                                    )]['Lon'],
                     mode='markers',
                     # text=us_acc.loc[(us_acc[x_params] == 1)],
 
                     marker=go.scattermapbox.Marker(
                         size=uk_acc["Num_veh_acc"]+1,
-                        color=uk_acc["Car_acc"],
-                        autocolorscale=True
-
+                        color=uk_acc["Car_acc"]
                     )),
                 row=i+1, col=k+1
             )
