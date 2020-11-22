@@ -29,7 +29,13 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-variables = ['Vehicle type', 'Speed Limit', 'Number of vehicles in accident', 'Year', 'Quarter', 'T_day', 'Motorcycle_involved_in_accident']
+variables = ['Vehicle type', 'Speed Limit', 'Number of vehicles in accident', 'Quarter', 'Time of day', 'Motorcycle_involved_in_accident']
+
+str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
+str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
+str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
+
+
 
 app.layout = html.Div(
     [
@@ -92,12 +98,13 @@ def switcher(arg):
     switch = {
         'Vehicle type': ['Car_involved_in_accident', 'Motorcycle_involved_in_accident',
                          'Truck_involved_in_accident', 'Other_involved_in_accident'],
-        'Speed Limit': 'Speed_limit',
         'Number of vehicles in accident': 'Num_veh_acc',
         'Year': 'Year',
         'Motorcycle_involved_in_accident': 'Mc_acc',
-        'T_day' : 'T_day',
-        'Quarter': 'Quarter'
+        'Quarter': ['Quarter', str_quarter_titles],
+        'Speed Limit': ['Speed_limit', str_speed_limit_titles],
+        'Time of day': ['T_day', str_T_day_titles]
+
     }
     return switch[arg]
 
@@ -112,15 +119,15 @@ def update_figure(us_plot_x, us_plot_y, years_slider):
     y_params = switcher(us_plot_y)
     years = years_slider
 
-    if len(x_params) != 1 or len(y_params) != 1:
+    if len(x_params[0]) != 1 or len(y_params[0]) != 1:
         # Todo: code condition to handle vehicle type and other stuff
         pass
 
     # dynamically estimate number of columns
-    n_columns = len(set(us_acc[x_params]))
+    n_columns = len(set(us_acc[x_params[0]]))
 
     # dynamically estimate number of rows
-    n_rows = len(set(us_acc[y_params]))
+    n_rows = len(set(us_acc[y_params[0]]))
     # number_of_values = Counter(us_acc[params[0]]).values()
 
     # make specs_matrix in right dimensions
@@ -135,27 +142,29 @@ def update_figure(us_plot_x, us_plot_y, years_slider):
         rows=n_rows, cols=n_columns,
         specs=specs_matrix,
         horizontal_spacing=0.01,
-        vertical_spacing=0.01
+        vertical_spacing=0.01,
+        column_titles=x_params[1],
+        row_titles=y_params[1]
     )
 
     for i in range(n_rows):
         for k in range(n_columns):
             fig.add_trace(
                 go.Scattermapbox(
-                    lat=us_acc.loc[((us_acc[y_params] == i) &
-                                    (us_acc[x_params] == k) &
+                    lat=us_acc.loc[((us_acc[y_params[0] ]== i) &
+                                    (us_acc[x_params[0]] == k) &
                                     ((us_acc['Year'] >= min(years)) &
                                      (us_acc['Year'] <= max(years)))
                                     )]['Lat'],
-                    lon=us_acc.loc[((us_acc[y_params] == i) &
-                                    (us_acc[x_params] == k) &
+                    lon=us_acc.loc[((us_acc[y_params[0]] == i) &
+                                    (us_acc[x_params[0]] == k) &
                                     ((us_acc['Year'] >= min(years)) &
                                      (us_acc['Year'] <= max(years)))
                                     )]['Lon'],
                     mode='markers',
-                    # text=us_acc.loc[(us_acc[x_params] == 1)],
+                    text=us_acc['Num_veh_acc'],
                     marker=go.scattermapbox.Marker(
-                        size=4,
+                        size=us_acc['Num_veh_acc']+1,
                     )),
                 row=i + 1, col=k + 1
             )
