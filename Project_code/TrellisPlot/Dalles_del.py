@@ -1,5 +1,6 @@
 import plotly.express as px
 import pandas as pd
+import numpy as np
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -52,11 +53,12 @@ str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
 
-app.layout = html.Div([
+app.layout = html.Div(children=[
     html.Div([
         html.H3('Map of UK'),
         dcc.Graph(id='UK_graph', style={'display': 'internal-block'}, figure={})
     ]),
+    html.P('''Pick the parameter that determines the columns in the trellis-plot'''),
     html.Div(
         [
             dcc.Dropdown(
@@ -70,7 +72,7 @@ app.layout = html.Div([
         ],
         style=dict(display='flex')
     ),
-
+    html.P('''Pick the parameter that determines the rows of the trellis-plot'''),
     html.Div(
         [
             dcc.Dropdown(
@@ -85,7 +87,7 @@ app.layout = html.Div([
         ],
         style=dict(display='flex')
     ),
-
+    html.P('''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
     html.Div(
         [
             dcc.Dropdown(
@@ -178,30 +180,147 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
 
     for i in range(n_rows):
         for k in range(n_columns):
-            fig.add_trace(
-                # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
-                go.Scattermapbox(
-                    lat=uk_acc.loc[((uk_acc[y_params[0]] == i) &
-                                    (uk_acc[x_params[0]] == k) &
-                                    ((uk_acc['Year'] >= min(years)) &
-                                    (uk_acc['Year'] <= max(years)))
-                                    )]['Lat'],
-                    lon=uk_acc.loc[((uk_acc[y_params[0]] == i) &
-                                    (uk_acc[x_params[0]] == k) &
-                                    ((uk_acc['Year'] >= min(years)) &
-                                    (uk_acc['Year'] <= max(years)))
-                                    )]['Lon'],
-                    mode='markers',
-                    text=uk_acc["Num_veh_acc"],
-                    # text=us_acc.loc[(us_acc[x_params] == 1)],
 
-                    marker=go.scattermapbox.Marker(
-                        size=uk_acc["Num_veh_acc"]+2,
-                        colorscale=[[0, 'rgb(50,50,50)'], [1, 'rgb(255,0,0)']],
-                        color=uk_acc[uk_color]
-                    )),
-                row=i+1, col=k+1
-            )
+            if (i == 0) and (k == 0):
+
+                fig.add_trace(
+
+                    # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
+                    go.Scattermapbox(
+
+                        lat=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 0) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                        (uk_acc['Year'] <= max(years)))
+                                        )]['Lat'],
+                        lon=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 0) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                        (uk_acc['Year'] <= max(years)))
+                                        )]['Lon'],
+                        legendgroup="Group1",
+                        name="Gray",
+                        mode='markers',
+                        text=uk_acc["Num_veh_acc"],
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}<br>" +
+                                      "Color: %{marker.color}",
+                        # text=us_acc.loc[(us_acc[x_params] == 1)],
+                        marker=go.scattermapbox.Marker(
+                            size=uk_acc["Num_veh_acc"]+2,
+                            color='rgb(120,120,120)'
+                        )),
+                    row=i+1, col=k+1
+                )
+
+                fig.add_trace(
+
+                    # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
+                    go.Scattermapbox(
+
+                        lat=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 1) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                         (uk_acc['Year'] <= max(years)))
+                                        )]['Lat'],
+                        lon=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 1) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                         (uk_acc['Year'] <= max(years)))
+                                        )]['Lon'],
+                        mode='markers',
+                        name="Red",
+                        showlegend=True,
+                        legendgroup="Group2",
+                        text=uk_acc["Num_veh_acc"],
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}",
+                        # text=us_acc.loc[(us_acc[x_params] == 1)],
+                        marker=go.scattermapbox.Marker(
+                            size=uk_acc["Num_veh_acc"] + 2,
+                            color='rgb(255,0,0)'
+                        )),
+                    row=i + 1, col=k + 1
+                )
+            else:
+                fig.add_trace(
+
+                    # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
+                    go.Scattermapbox(
+
+                        lat=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 0) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                         (uk_acc['Year'] <= max(years)))
+                                        )]['Lat'],
+                        lon=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 0) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                         (uk_acc['Year'] <= max(years)))
+                                        )]['Lon'],
+                        legendgroup="Group1",
+                        showlegend=False,
+                        name="Gray",
+                        mode='markers',
+                        text=uk_acc["Num_veh_acc"],
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}<br>" +
+                                      "Color: %{marker.color}",
+                        # text=us_acc.loc[(us_acc[x_params] == 1)],
+                        marker=go.scattermapbox.Marker(
+                            size=uk_acc["Num_veh_acc"] + 2,
+                            color='rgb(120,120,120)'
+                        )),
+                    row=i + 1, col=k + 1
+                )
+
+                fig.add_trace(
+
+                    # https://plotly.com/python-api-reference/generated/plotly.graph_objects.Scattermapbox.html
+                    go.Scattermapbox(
+
+                        lat=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 1) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                         (uk_acc['Year'] <= max(years)))
+                                        )]['Lat'],
+                        lon=uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                        (uk_acc[x_params[0]] == k) &
+                                        (uk_acc[uk_color] == 1) &
+                                        ((uk_acc['Year'] >= min(years)) &
+                                         (uk_acc['Year'] <= max(years)))
+                                        )]['Lon'],
+                        mode='markers',
+                        name="Red",
+                        showlegend=False,
+                        legendgroup="Group2",
+                        text=uk_acc["Num_veh_acc"],
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}",
+                        # text=us_acc.loc[(us_acc[x_params] == 1)],
+                        marker=go.scattermapbox.Marker(
+                            size=uk_acc["Num_veh_acc"] + 2,
+                            color='rgb(255,0,0)'
+                        )),
+                    row=i + 1, col=k + 1
+                )
+
+
+
+
+
+
 
     # Set size of plots in pixels
     fig.layout.height=1500
@@ -228,6 +347,21 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
     fig.update_xaxes()
     fig.update_layout(transition_duration=500)
 
+
     return fig
 
 app.run_server(debug=True, use_reloader=False)
+
+
+
+'''customdata=pd.concat([uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                    (uk_acc[x_params[0]] == k) &
+                                    ((uk_acc['Year'] >= min(years)) &
+                                    (uk_acc['Year'] <= max(years)))
+                                    )]['Num_veh_acc'],
+                                    uk_acc.loc[((uk_acc[y_params[0]] == i) &
+                                    (uk_acc[x_params[0]] == k) &
+                                    ((uk_acc['Year'] >= min(years)) &
+                                    (uk_acc['Year'] <= max(years)))
+                                    )]['Car_acc']], axis=1),
+                    '''
