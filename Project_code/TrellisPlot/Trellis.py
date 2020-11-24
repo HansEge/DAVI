@@ -35,7 +35,7 @@ color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Tru
              'Other vehicle involved in accident']
 
 # center coords and zoom level
-uk_center_coords = [52.72759, -1.6252, 4]
+uk_center_coords = [54.832621, -4.577778,3.5]
 us_center_coords = [38, -97, 2]
 
 
