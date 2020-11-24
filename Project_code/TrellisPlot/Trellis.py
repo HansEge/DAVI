@@ -8,7 +8,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew")
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
@@ -35,9 +35,8 @@ color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Tru
              'Other vehicle involved in accident']
 
 # center coords and zoom level
-uk_center_coords = [54.832621, -4.577778,3.5]
+uk_center_coords = [54.832621, -4.577778, 3.5]
 us_center_coords = [38, -97, 2]
-
 
 datasets = [uk_acc, us_acc]
 datasets_str = ['UK', 'US']
@@ -160,10 +159,6 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
     center_coords = switcher(dataset)[1]
-
-    if len(x_params[0]) != 1 or len(y_params[0]) != 1:
-        # Todo: code condition to handle vehicle type and other stuff
-        pass
 
     # dynamically estimate number of columns
     n_columns = len(set(data[x_params[0]]))
