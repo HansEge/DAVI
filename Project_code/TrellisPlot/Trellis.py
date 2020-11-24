@@ -29,13 +29,14 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-variables = ['Vehicle type', 'Speed Limit', 'Number of vehicles in accident', 'Quarter', 'Time of day', 'Motorcycle_involved_in_accident']
+variables = ['Speed Limit', 'Quarter', 'Time of day']
+
+color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Truck involved in accident',
+             'Other vehicle involved in accident']
 
 str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
-
-
 
 app.layout = html.Div(
     [
@@ -52,7 +53,7 @@ app.layout = html.Div(
                     id='US_plot_x',
                     options=[{'label': i, 'value': i} for i in variables],
                     placeholder='Pick one',
-                    value=variables[1],
+                    value=variables[0],
                     style=dict(width='40%',
                                verticalAlign="middle")
                 )
@@ -66,7 +67,21 @@ app.layout = html.Div(
                     id='US_plot_y',
                     options=[{'label': i, 'value': i} for i in variables],
                     placeholder='Pick one',
-                    value=variables[4],
+                    value=variables[1],
+                    style=dict(width='40%',
+                               display='inline-block',
+                               verticalAlign="middle")
+                )
+            ],
+            style=dict(display='flex')
+        ),
+        html.Div(
+            [
+                dcc.Dropdown(
+                    id='US_color',
+                    options=[{'label': i, 'value': i} for i in color_var],
+                    placeholder='Pick one',
+                    value=color_var[0],
                     style=dict(width='40%',
                                display='inline-block',
                                verticalAlign="middle")
@@ -96,15 +111,16 @@ app.layout = html.Div(
 
 def switcher(arg):
     switch = {
-        'Vehicle type': ['Car_involved_in_accident', 'Motorcycle_involved_in_accident',
-                         'Truck_involved_in_accident', 'Other_involved_in_accident'],
+        'Quarter': ['Quarter', str_quarter_titles],
+        'Speed Limit': ['Speed_limit', str_speed_limit_titles],
+        'Time of day': ['T_day', str_T_day_titles],
         'Number of vehicles in accident': 'Num_veh_acc',
         'Year': 'Year',
         'Motorcycle_involved_in_accident': 'Mc_acc',
-        'Quarter': ['Quarter', str_quarter_titles],
-        'Speed Limit': ['Speed_limit', str_speed_limit_titles],
-        'Time of day': ['T_day', str_T_day_titles]
-
+        'Car involved in accident': 'Car_acc',
+        'Motorcycle involved in accident': 'Mc_acc',
+        'Truck involved in accident': 'Truck_acc',
+        'Other vehicle involved in accident': 'Other_acc'
     }
     return switch[arg]
 
@@ -113,11 +129,13 @@ def switcher(arg):
     Output('US_graph', 'figure'),
     [Input('US_plot_x', 'value'),
      Input('US_plot_y', 'value'),
-     Input('year-range-slider', 'value')])
-def update_figure(us_plot_x, us_plot_y, years_slider):
+     Input('year-range-slider', 'value'),
+     Input('US_color', 'value')])
+def update_figure(us_plot_x, us_plot_y, years_slider, us_color):
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
     years = years_slider
+    us_color = switcher(us_color)
 
     if len(x_params[0]) != 1 or len(y_params[0]) != 1:
         # Todo: code condition to handle vehicle type and other stuff
@@ -151,7 +169,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider):
         for k in range(n_columns):
             fig.add_trace(
                 go.Scattermapbox(
-                    lat=us_acc.loc[((us_acc[y_params[0] ]== i) &
+                    lat=us_acc.loc[((us_acc[y_params[0]] == i) &
                                     (us_acc[x_params[0]] == k) &
                                     ((us_acc['Year'] >= min(years)) &
                                      (us_acc['Year'] <= max(years)))
@@ -164,7 +182,9 @@ def update_figure(us_plot_x, us_plot_y, years_slider):
                     mode='markers',
                     text=us_acc['Num_veh_acc'],
                     marker=go.scattermapbox.Marker(
-                        size=us_acc['Num_veh_acc']+1,
+                        size=us_acc["Num_veh_acc"] + 2,
+                        colorscale=[[0, 'rgb(228,26,28)'], [1, 'rgb(55,126,184)']],
+                        color=us_acc[us_color]
                     )),
                 row=i + 1, col=k + 1
             )
