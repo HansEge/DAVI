@@ -14,12 +14,12 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
-# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\project_data\\Cleaned_data\\"
+path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -46,7 +46,7 @@ str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
 app.layout = html.Div(
-    [
+    children=[
         html.Div(
             [
                 html.H6('Pick which dataset to load'),
@@ -64,7 +64,7 @@ app.layout = html.Div(
                 dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
             ]
         ),
-
+        html.P('''Pick the parameter that determines the columns in the trellis-plot'''),
         html.Div(
             [
                 dcc.Dropdown(
@@ -78,7 +78,7 @@ app.layout = html.Div(
             ],
             style=dict(display='flex')
         ),
-
+        html.P('''Pick the parameter that determines the rows of the trellis-plot'''),
         html.Div(
             [
                 dcc.Dropdown(
@@ -93,6 +93,7 @@ app.layout = html.Div(
             ],
             style=dict(display='flex')
         ),
+        html.P('''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
         html.Div(
             [
                 dcc.Dropdown(
@@ -187,27 +188,122 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
 
     for i in range(n_rows):
         for k in range(n_columns):
-            fig.add_trace(
-                go.Scattermapbox(
-                    lat=data.loc[((data[y_params[0]] == i) &
-                                  (data[x_params[0]] == k) &
-                                  ((data['Year'] >= min(years)) &
-                                   (data['Year'] <= max(years)))
-                                  )]['Lat'],
-                    lon=data.loc[((data[y_params[0]] == i) &
-                                  (data[x_params[0]] == k) &
-                                  ((data['Year'] >= min(years)) &
-                                   (data['Year'] <= max(years)))
-                                  )]['Lon'],
-                    mode='markers',
-                    text=data['Num_veh_acc'],
-                    marker=go.scattermapbox.Marker(
-                        size=data["Num_veh_acc"] + 2,
-                        colorscale=[[0, 'rgb(228,26,28)'], [1, 'rgb(55,126,184)']],
-                        color=data[us_color]
-                    )),
-                row=i + 1, col=k + 1
-            )
+
+            if (i == 0) and (k == 0):
+                fig.add_trace(
+                    go.Scattermapbox(
+                        lat=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 0) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lat'],
+                        lon=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 0) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lon'],
+                        legendgroup="Group1",
+                        name="Gray",
+                        mode='markers',
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}",
+                        text=data['Num_veh_acc'],
+                        marker=go.scattermapbox.Marker(
+                            size=data["Num_veh_acc"] + 2,
+                            color='rgb(120,120,120)'
+                        )),
+                    row=i + 1, col=k + 1
+                )
+                fig.add_trace(
+                    go.Scattermapbox(
+                        lat=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 1) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lat'],
+                        lon=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 1) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lon'],
+                        legendgroup="Group2",
+                        name="Red",
+                        mode='markers',
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}",
+                        text=data['Num_veh_acc'],
+                        marker=go.scattermapbox.Marker(
+                            size=data["Num_veh_acc"] + 2,
+                            color='rgb(255,0,0)'
+
+                        )),
+                    row=i + 1, col=k + 1
+                )
+            else:
+                fig.add_trace(
+                    go.Scattermapbox(
+                        lat=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 0) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lat'],
+                        lon=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 0) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lon'],
+                        legendgroup="Group1",
+                        showlegend=False,
+                        name="Gray",
+                        mode='markers',
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}",
+                        text=data['Num_veh_acc'],
+                        marker=go.scattermapbox.Marker(
+                            size=data["Num_veh_acc"] + 2,
+                            color='rgb(120,120,120)'
+                        )),
+                    row=i + 1, col=k + 1
+                )
+                fig.add_trace(
+                    go.Scattermapbox(
+                        lat=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 1) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lat'],
+                        lon=data.loc[((data[y_params[0]] == i) &
+                                      (data[x_params[0]] == k) &
+                                      (uk_acc[us_color] == 1) &
+                                      ((data['Year'] >= min(years)) &
+                                       (data['Year'] <= max(years)))
+                                      )]['Lon'],
+                        legendgroup="Group2",
+                        showlegend=False,
+                        name="Red",
+                        mode='markers',
+                        hovertemplate="Latitude: %{lat}<br>" +
+                                      "Longitude: %{lon}<br>" +
+                                      "Number of vehicles in accident: %{text}",
+                        text=data['Num_veh_acc'],
+                        marker=go.scattermapbox.Marker(
+                            size=data["Num_veh_acc"] + 2,
+                            color='rgb(255,0,0)'
+
+                        )),
+                    row=i + 1, col=k + 1
+                )
+
     # Set size of plots in pixels
     fig.layout.height = 1200
     fig.layout.width = 1200
