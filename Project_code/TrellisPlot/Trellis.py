@@ -14,12 +14,12 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -38,6 +38,7 @@ color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Tru
 uk_center_coords = [54.832621, -4.577778, 3.5]
 us_center_coords = [38, -97, 2]
 
+# Used to load different datasets
 datasets = [uk_acc, us_acc]
 datasets_str = ['UK', 'US']
 
@@ -93,7 +94,8 @@ app.layout = html.Div(
             ],
             style=dict(display='flex')
         ),
-        html.P('''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
+        html.P(
+            '''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
         html.Div(
             [
                 dcc.Dropdown(
@@ -107,6 +109,13 @@ app.layout = html.Div(
                 )
             ],
             style=dict(display='flex')
+        ),
+        html.Div(
+            [
+                html.Button('Toggle size',
+                            id='toggle_btn',
+                            n_clicks=0),
+            ]
         ),
         html.Div(
             [
@@ -152,14 +161,24 @@ def switcher(arg):
      Input('US_plot_y', 'value'),
      Input('year-range-slider', 'value'),
      Input('US_color', 'value'),
-     Input('dataset', 'value')])
-def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
+     Input('dataset', 'value'),
+     Input('toggle_btn', 'n_clicks')])
+def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle):
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
     years = years_slider
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
     center_coords = switcher(dataset)[1]
+
+    # Toggle button stuff
+    toggle = 2 if toggle is None else toggle
+    toggle_on = True if toggle % 2 == 0 else False
+
+    if toggle_on:
+        size_param = data['Num_veh_acc']
+    else:
+        size_param = 1
 
     # dynamically estimate number of columns
     n_columns = len(set(data[x_params[0]]))
@@ -212,7 +231,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=data["Num_veh_acc"] + 2,
+                            size=size_param + 2,
                             color='rgb(120,120,120)'
                         )),
                     row=i + 1, col=k + 1
@@ -239,7 +258,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=data["Num_veh_acc"] + 2,
+                            size=size_param + 2,
                             color='rgb(255,0,0)'
 
                         )),
@@ -269,7 +288,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=data["Num_veh_acc"] + 2,
+                            size=size_param + 2,
                             color='rgb(120,120,120)'
                         )),
                     row=i + 1, col=k + 1
@@ -297,7 +316,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset):
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=data["Num_veh_acc"] + 2,
+                            size=size_param + 2,
                             color='rgb(255,0,0)'
 
                         )),
