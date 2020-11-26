@@ -48,84 +48,89 @@ str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourt
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
-app.layout = html.Div([
-    dbc.Row(dbc.Col(html.H6('Pick which dataset to load'))),
-    dbc.Row(dbc.Col(dcc.Dropdown(
+
+user_options_card = dbc.Card(
+    [
+        dbc.CardBody(
+            [
+                html.P('Pick which dataset to load', className="card-text"),
+                dcc.Dropdown(
                     id='dataset',
                     options=[{'label': i, 'value': i} for i in datasets_str],
                     placeholder='Pick one',
                     value=datasets_str[0],
-                    style=dict(width='40%', verticalAlign="middle")
-                    ))),
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle")
+                    ),
 
-    dbc.Row([dbc.Col(dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={}),
-                     width={'size': 10, 'offset': 3, 'order': 1}),
-            dbc.Col(html.P('''Pick the parameter that determines the columns in the trellis-plot'''),
-                    width={'size': 2, 'offset': 0, 'order': 0})]),
+                html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
+                dcc.Dropdown(
+                    id='US_plot_x',
+                    options=[{'label': i, 'value': i} for i in variables],
+                    placeholder='Pick one',
+                    value=variables[0],
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle")),
 
-    dbc.Row([dbc.Col(dcc.Dropdown(
-                id='US_plot_x',
-                options=[{'label': i, 'value': i} for i in variables],
-                placeholder='Pick one',
-                value=variables[0],
-                style=dict(width='40%',
-                           verticalAlign="middle")))]),
+                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
+                dcc.Dropdown(
+                    id='US_plot_y',
+                    options=[{'label': i, 'value': i} for i in variables],
+                    placeholder='Pick one',
+                    value=variables[1],
+                    style=dict(width='70%',
+                               display='inline-block',
+                               verticalAlign="middle")),
 
-    html.P('''Pick the parameter that determines the rows of the trellis-plot'''),
-    html.Div(
-        [
-            dcc.Dropdown(
-                id='US_plot_y',
-                options=[{'label': i, 'value': i} for i in variables],
-                placeholder='Pick one',
-                value=variables[1],
-                style=dict(width='40%',
-                           display='inline-block',
-                           verticalAlign="middle")
-            )
-        ],
-        style=dict(display='flex')
-    ),
-    html.P(
-        '''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
-    html.Div(
-        [
-            dcc.Dropdown(
-                id='US_color',
-                options=[{'label': i, 'value': i} for i in color_var],
-                placeholder='Pick one',
-                value=color_var[0],
-                style=dict(width='40%',
-                           display='inline-block',
-                           verticalAlign="middle")
-            )
-        ],
-        style=dict(display='flex')
-    ),
-    html.Div(
-        [
-            html.Button('Toggle size',
-                        id='toggle_btn',
-                        n_clicks=0),
-        ]
-    ),
-    html.Div(
-        [
-            dcc.RangeSlider(
-                id='year-range-slider',
-                min=2005,
-                max=2014,
-                step=1,
-                value=[2005, 2006],
-                tooltip=(dict(placement='bottom')),
-                marks={2005: '2005',
-                       2014: '2014'}
+                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
+                dcc.Dropdown(
+                    id='US_color',
+                    options=[{'label': i, 'value': i} for i in color_var],
+                    placeholder='Pick one',
+                    value=color_var[0],
+                    style=dict(width='70%',
+                               display='inline-block',
+                               verticalAlign="middle")),
 
-            ),
-            html.Div(id='output-container-range-slider')
-        ])
-    ],
+
+                html.Div(
+                    [
+                        html.Button('Toggle size',
+                                    id='toggle_btn',
+                                    n_clicks=0),
+                    ]),
+
+                html.Div(
+                    [
+                        dcc.RangeSlider(
+                            id='year-range-slider',
+                            min=2005,
+                            max=2014,
+                            step=1,
+                            value=[2005, 2006],
+                            tooltip=(dict(placement='bottom')),
+                            marks={2005: '2005',
+                                   2014: '2014'}
+
+                        ),
+                        html.Div(id='output-container-range-slider')
+                    ])
+            ]
+        )
+    ]
 )
+
+graph_card = dbc.Card(
+    [
+        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+    ]
+)
+
+
+app.layout = html.Div([
+    dbc.Row([dbc.Col(user_options_card, width=3),
+             dbc.Col(graph_card, width=9)])])
+
+
+
 
 
 def switcher(arg):
