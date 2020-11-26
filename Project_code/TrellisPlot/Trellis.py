@@ -4,9 +4,6 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-import numpy as np
-
-import json
 
 import dash
 import dash_core_components as dcc
@@ -19,12 +16,12 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
-# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -51,93 +48,82 @@ str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourt
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
-app.layout = html.Div(
-    children=[
-        html.Div(
-            [
-                html.H6('Pick which dataset to load'),
-                dcc.Dropdown(
+app.layout = html.Div([
+    dbc.Row(dbc.Col(html.H6('Pick which dataset to load'))),
+    dbc.Row(dbc.Col(dcc.Dropdown(
                     id='dataset',
                     options=[{'label': i, 'value': i} for i in datasets_str],
                     placeholder='Pick one',
                     value=datasets_str[0],
                     style=dict(width='40%', verticalAlign="middle")
-                ),
-            ]
-        ),
-        html.Div(
-            [
-                dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
-            ]
-        ),
-        html.P('''Pick the parameter that determines the columns in the trellis-plot'''),
-        html.Div(
-            [
-                dcc.Dropdown(
-                    id='US_plot_x',
-                    options=[{'label': i, 'value': i} for i in variables],
-                    placeholder='Pick one',
-                    value=variables[0],
-                    style=dict(width='40%',
-                               verticalAlign="middle")
-                )
-            ],
-            style=dict(display='flex')
-        ),
-        html.P('''Pick the parameter that determines the rows of the trellis-plot'''),
-        html.Div(
-            [
-                dcc.Dropdown(
-                    id='US_plot_y',
-                    options=[{'label': i, 'value': i} for i in variables],
-                    placeholder='Pick one',
-                    value=variables[1],
-                    style=dict(width='40%',
-                               display='inline-block',
-                               verticalAlign="middle")
-                )
-            ],
-            style=dict(display='flex')
-        ),
-        html.P(
-            '''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
-        html.Div(
-            [
-                dcc.Dropdown(
-                    id='US_color',
-                    options=[{'label': i, 'value': i} for i in color_var],
-                    placeholder='Pick one',
-                    value=color_var[0],
-                    style=dict(width='40%',
-                               display='inline-block',
-                               verticalAlign="middle")
-                )
-            ],
-            style=dict(display='flex')
-        ),
-        html.Div(
-            [
-                html.Button('Toggle size',
-                            id='toggle_btn',
-                            n_clicks=0),
-            ]
-        ),
-        html.Div(
-            [
-                dcc.RangeSlider(
-                    id='year-range-slider',
-                    min=2005,
-                    max=2014,
-                    step=1,
-                    value=[2005, 2006],
-                    tooltip=(dict(placement='bottom')),
-                    marks={2005: '2005',
-                           2014: '2014'}
+                    ))),
 
-                ),
-                html.Div(id='output-container-range-slider')
-            ]
-        )
+    dbc.Row([dbc.Col(dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={}),
+                     width={'size': 10, 'offset': 3, 'order': 1}),
+            dbc.Col(html.P('''Pick the parameter that determines the columns in the trellis-plot'''),
+                    width={'size': 2, 'offset': 0, 'order': 0})]),
+
+    dbc.Row([dbc.Col(dcc.Dropdown(
+                id='US_plot_x',
+                options=[{'label': i, 'value': i} for i in variables],
+                placeholder='Pick one',
+                value=variables[0],
+                style=dict(width='40%',
+                           verticalAlign="middle")))]),
+
+    html.P('''Pick the parameter that determines the rows of the trellis-plot'''),
+    html.Div(
+        [
+            dcc.Dropdown(
+                id='US_plot_y',
+                options=[{'label': i, 'value': i} for i in variables],
+                placeholder='Pick one',
+                value=variables[1],
+                style=dict(width='40%',
+                           display='inline-block',
+                           verticalAlign="middle")
+            )
+        ],
+        style=dict(display='flex')
+    ),
+    html.P(
+        '''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
+    html.Div(
+        [
+            dcc.Dropdown(
+                id='US_color',
+                options=[{'label': i, 'value': i} for i in color_var],
+                placeholder='Pick one',
+                value=color_var[0],
+                style=dict(width='40%',
+                           display='inline-block',
+                           verticalAlign="middle")
+            )
+        ],
+        style=dict(display='flex')
+    ),
+    html.Div(
+        [
+            html.Button('Toggle size',
+                        id='toggle_btn',
+                        n_clicks=0),
+        ]
+    ),
+    html.Div(
+        [
+            dcc.RangeSlider(
+                id='year-range-slider',
+                min=2005,
+                max=2014,
+                step=1,
+                value=[2005, 2006],
+                tooltip=(dict(placement='bottom')),
+                marks={2005: '2005',
+                       2014: '2014'}
+
+            ),
+            html.Div(id='output-container-range-slider')
+        ])
     ],
 )
 
@@ -160,8 +146,6 @@ def switcher(arg):
     return switch[arg]
 
 
-
-
 @app.callback(
     Output('US_graph', 'figure'),
     [Input('US_plot_x', 'value'),
@@ -169,9 +153,8 @@ def switcher(arg):
      Input('year-range-slider', 'value'),
      Input('US_color', 'value'),
      Input('dataset', 'value'),
-     Input('toggle_btn', 'n_clicks'),
-     Input('US_graph', 'relayoutData')])
-def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle, relayout_data):
+     Input('toggle_btn', 'n_clicks')])
+def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle):
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
     years = years_slider
@@ -179,24 +162,6 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
     center_coords = switcher(dataset)[1]
-
-    zoom_level = center_coords[2]
-
-    # used when program starts
-    center_coords = {
-        'lat': center_coords[0],
-        'lon': center_coords[1],
-    }
-
-    if relayout_data != None:
-        if not'autosize' in relayout_data:
-            center_coords.clear()
-            values_view = relayout_data.values()
-            value_iterator = iter(values_view)
-            center_coords, zoom_level = next(value_iterator), next(value_iterator)
-
-
-
 
     # Toggle button stuff
     toggle = 2 if toggle is None else toggle
@@ -229,14 +194,15 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
         vertical_spacing=0.01,
         column_titles=x_params[1],
         row_titles=y_params[1],
-        shared_xaxes='rows'
+        shared_xaxes=True,
+        shared_yaxes=True
     )
 
     for i in range(n_rows):
         for k in range(n_columns):
 
             if (i == 0) and (k == 0):
-                fig.add_trace(
+                fig.append_trace(
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
@@ -263,7 +229,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                         )),
                     row=i + 1, col=k + 1
                 )
-                fig.add_trace(
+                fig.append_trace(
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
@@ -292,7 +258,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                     row=i + 1, col=k + 1
                 )
             else:
-                fig.add_trace(
+                fig.append_trace(
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
@@ -320,7 +286,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                         )),
                     row=i + 1, col=k + 1
                 )
-                fig.add_trace(
+                fig.append_trace(
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
@@ -363,11 +329,11 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
         bearing=0,
         accesstoken=mapbox_access_token,
         center=dict(
-            lat=center_coords['lat'],
-            lon=center_coords['lon']
+            lat=center_coords[0],
+            lon=center_coords[1]
         ),
         pitch=0,
-        zoom=zoom_level
+        zoom=center_coords[2]
     )
 
     fig.update_yaxes()
