@@ -19,12 +19,12 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
-# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -51,96 +51,85 @@ str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourt
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
-app.layout = html.Div(
-    children=[
-        html.Div(
+user_options_card = dbc.Card(
+    [
+        dbc.CardBody(
             [
-                html.H6('Pick which dataset to load'),
+                html.P('Pick which dataset to load', className="card-text"),
                 dcc.Dropdown(
                     id='dataset',
                     options=[{'label': i, 'value': i} for i in datasets_str],
                     placeholder='Pick one',
                     value=datasets_str[0],
-                    style=dict(width='40%', verticalAlign="middle")
-                ),
-            ]
-        ),
-        html.Div(
-            [
-                dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
-            ]
-        ),
-        html.P('''Pick the parameter that determines the columns in the trellis-plot'''),
-        html.Div(
-            [
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle")
+                    ),
+
+                html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
                     id='US_plot_x',
                     options=[{'label': i, 'value': i} for i in variables],
                     placeholder='Pick one',
                     value=variables[0],
-                    style=dict(width='40%',
-                               verticalAlign="middle")
-                )
-            ],
-            style=dict(display='flex')
-        ),
-        html.P('''Pick the parameter that determines the rows of the trellis-plot'''),
-        html.Div(
-            [
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle")),
+
+                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
                     id='US_plot_y',
                     options=[{'label': i, 'value': i} for i in variables],
                     placeholder='Pick one',
                     value=variables[1],
-                    style=dict(width='40%',
+                    style=dict(width='70%',
                                display='inline-block',
-                               verticalAlign="middle")
-                )
-            ],
-            style=dict(display='flex')
-        ),
-        html.P(
-            '''Pick the vehicle type to focus on (the accidents with that involve the type of vehicle will be colored red'''),
-        html.Div(
-            [
+                               verticalAlign="middle")),
+
+                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
                     id='US_color',
                     options=[{'label': i, 'value': i} for i in color_var],
                     placeholder='Pick one',
                     value=color_var[0],
-                    style=dict(width='40%',
+                    style=dict(width='70%',
                                display='inline-block',
-                               verticalAlign="middle")
-                )
-            ],
-            style=dict(display='flex')
-        ),
-        html.Div(
-            [
-                html.Button('Toggle size',
-                            id='toggle_btn',
-                            n_clicks=0),
-            ]
-        ),
-        html.Div(
-            [
-                dcc.RangeSlider(
-                    id='year-range-slider',
-                    min=2005,
-                    max=2014,
-                    step=1,
-                    value=[2005, 2006],
-                    tooltip=(dict(placement='bottom')),
-                    marks={2005: '2005',
-                           2014: '2014'}
+                               verticalAlign="middle")),
 
-                ),
-                html.Div(id='output-container-range-slider')
+
+                html.Div(
+                    [
+                        html.Button('Toggle size',
+                                    id='toggle_btn',
+                                    n_clicks=0),
+                    ]),
+
+                html.Div(
+                    [
+                        dcc.RangeSlider(
+                            id='year-range-slider',
+                            min=2005,
+                            max=2014,
+                            step=1,
+                            value=[2005, 2006],
+                            tooltip=(dict(placement='bottom')),
+                            marks={2005: '2005',
+                                   2014: '2014'}
+
+                        ),
+                        html.Div(id='output-container-range-slider')
+                    ])
             ]
         )
-    ],
+    ]
 )
 
+graph_card = dbc.Card(
+    [
+        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+    ]
+)
+
+
+app.layout = html.Div([
+    dbc.Row([dbc.Col(user_options_card, width=3),
+             dbc.Col(graph_card, width=9)])])
 
 def switcher(arg):
     switch = {
