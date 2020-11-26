@@ -4,6 +4,9 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+import numpy as np
+
+import json
 
 import dash
 import dash_core_components as dcc
@@ -59,7 +62,7 @@ app.layout = html.Div(
                     placeholder='Pick one',
                     value=datasets_str[0],
                     style=dict(width='40%', verticalAlign="middle")
-                )
+                ),
             ]
         ),
         html.Div(
@@ -157,6 +160,8 @@ def switcher(arg):
     return switch[arg]
 
 
+
+
 @app.callback(
     Output('US_graph', 'figure'),
     [Input('US_plot_x', 'value'),
@@ -164,8 +169,9 @@ def switcher(arg):
      Input('year-range-slider', 'value'),
      Input('US_color', 'value'),
      Input('dataset', 'value'),
-     Input('toggle_btn', 'n_clicks')])
-def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle):
+     Input('toggle_btn', 'n_clicks'),
+     Input('US_graph', 'relayoutData')])
+def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle, relayout_data):
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
     years = years_slider
@@ -173,6 +179,24 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle)
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
     center_coords = switcher(dataset)[1]
+
+    zoom_level = center_coords[2]
+
+    # used when program starts
+    center_coords = {
+        'lat': center_coords[0],
+        'lon': center_coords[1],
+    }
+
+    if relayout_data != None:
+        if not'autosize' in relayout_data:
+            center_coords.clear()
+            values_view = relayout_data.values()
+            value_iterator = iter(values_view)
+            center_coords, zoom_level = next(value_iterator), next(value_iterator)
+
+
+
 
     # Toggle button stuff
     toggle = 2 if toggle is None else toggle
@@ -339,11 +363,11 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle)
         bearing=0,
         accesstoken=mapbox_access_token,
         center=dict(
-            lat=center_coords[0],
-            lon=center_coords[1]
+            lat=center_coords['lat'],
+            lon=center_coords['lon']
         ),
         pitch=0,
-        zoom=center_coords[2]
+        zoom=zoom_level
     )
 
     fig.update_yaxes()
