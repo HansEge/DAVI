@@ -158,6 +158,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle)
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
     years = years_slider
+    veh_type_str = us_color
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
     center_coords = switcher(dataset)[1]
@@ -216,7 +217,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle)
                                        (data['Year'] <= max(years)))
                                       )]['Lon'],
                         legendgroup="Group1",
-                        name="Gray",
+                        name="All other vehicle types",
                         mode='markers',
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
@@ -243,7 +244,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle)
                                        (data['Year'] <= max(years)))
                                       )]['Lon'],
                         legendgroup="Group2",
-                        name="Red",
+                        name=veh_type_str,
                         mode='markers',
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
