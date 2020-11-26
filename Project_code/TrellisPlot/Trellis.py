@@ -23,8 +23,8 @@ path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Proje
 path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-#path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-#path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -229,13 +229,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 0) &
+                                      (data[us_color] == 0) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lat'],
                         lon=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 0) &
+                                      (data[us_color] == 0) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lon'],
@@ -256,13 +256,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 1) &
+                                      (data[us_color] == 1) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lat'],
                         lon=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 1) &
+                                      (data[us_color] == 1) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lon'],
@@ -285,13 +285,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 0) &
+                                      (data[us_color] == 0) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lat'],
                         lon=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 0) &
+                                      (data[us_color] == 0) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lon'],
@@ -313,13 +313,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                     go.Scattermapbox(
                         lat=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 1) &
+                                      (data[us_color] == 1) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lat'],
                         lon=data.loc[((data[y_params[0]] == i) &
                                       (data[x_params[0]] == k) &
-                                      (uk_acc[us_color] == 1) &
+                                      (data[us_color] == 1) &
                                       ((data['Year'] >= min(years)) &
                                        (data['Year'] <= max(years)))
                                       )]['Lon'],
