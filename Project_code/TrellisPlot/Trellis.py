@@ -12,6 +12,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 
 from dash.dependencies import Input, Output, State
 
@@ -62,7 +63,7 @@ user_options_card = dbc.Card(
                     placeholder='Pick one',
                     value=datasets_str[0],
                     style=dict(width='70%', display='inline-block', verticalAlign="middle")
-                    ),
+                ),
 
                 html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
@@ -92,12 +93,13 @@ user_options_card = dbc.Card(
                                display='inline-block',
                                verticalAlign="middle")),
 
-
                 html.Div(
                     [
-                        html.Button('Toggle size',
-                                    id='toggle_btn',
-                                    n_clicks=0),
+                        daq.BooleanSwitch(
+                            id='toggle-switch',
+                            on=True,
+                            color="#9B51E0"
+                        )
                     ]),
 
                 html.Div(
@@ -126,10 +128,10 @@ graph_card = dbc.Card(
     ]
 )
 
-
 app.layout = html.Div([
     dbc.Row([dbc.Col(user_options_card, width=3),
              dbc.Col(graph_card, width=9)])])
+
 
 def switcher(arg):
     switch = {
@@ -149,8 +151,6 @@ def switcher(arg):
     return switch[arg]
 
 
-
-
 @app.callback(
     Output('US_graph', 'figure'),
     [Input('US_plot_x', 'value'),
@@ -158,7 +158,7 @@ def switcher(arg):
      Input('year-range-slider', 'value'),
      Input('US_color', 'value'),
      Input('dataset', 'value'),
-     Input('toggle_btn', 'n_clicks'),
+     Input('toggle-switch', 'on'),
      Input('US_graph', 'relayoutData')])
 def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle, relayout_data):
     x_params = switcher(us_plot_x)
@@ -178,20 +178,15 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     }
 
     if relayout_data != None:
-        if not'autosize' in relayout_data:
+        if not 'autosize' in relayout_data:
             center_coords.clear()
             values_view = relayout_data.values()
             value_iterator = iter(values_view)
             center_coords, zoom_level = next(value_iterator), next(value_iterator)
 
-
-
-
     # Toggle button stuff
-    toggle = 2 if toggle is None else toggle
-    toggle_on = True if toggle % 2 == 0 else False
 
-    if toggle_on:
+    if toggle:
         size_param = data['Num_veh_acc']
     else:
         size_param = 1
