@@ -184,8 +184,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
             value_iterator = iter(values_view)
             center_coords, zoom_level = next(value_iterator), next(value_iterator)
 
-    # Toggle button stuff
-
+    # Toggle switch stuff
     if toggle:
         size_param = data['Num_veh_acc']
     else:
