@@ -365,3 +365,92 @@ app.run_server(debug=True, use_reloader=False)
                                     (uk_acc['Year'] <= max(years)))
                                     )]['Car_acc']], axis=1),
                     '''
+
+
+
+
+
+
+
+
+
+
+user_options_card = dbc.Card(
+    [
+        dbc.CardBody(
+            [
+                html.P('Pick which dataset to load', className="card-text"),
+                dcc.Dropdown(
+                    id='dataset',
+                    options=[{'label': i, 'value': i} for i in datasets_str],
+                    placeholder='Pick one',
+                    value=datasets_str[0],
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle")
+                    ),
+
+                html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
+                dcc.Dropdown(
+                    id='US_plot_x',
+                    options=[{'label': i, 'value': i} for i in variables],
+                    placeholder='Pick one',
+                    value=variables[0],
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle")),
+
+                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
+                dcc.Dropdown(
+                    id='US_plot_y',
+                    options=[{'label': i, 'value': i} for i in variables],
+                    placeholder='Pick one',
+                    value=variables[1],
+                    style=dict(width='70%',
+                               display='inline-block',
+                               verticalAlign="middle")),
+
+                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
+                dcc.Dropdown(
+                    id='US_color',
+                    options=[{'label': i, 'value': i} for i in color_var],
+                    placeholder='Pick one',
+                    value=color_var[0],
+                    style=dict(width='70%',
+                               display='inline-block',
+                               verticalAlign="middle")),
+
+
+                html.Div(
+                    [
+                        html.Button('Toggle size',
+                                    id='toggle_btn',
+                                    n_clicks=0),
+                    ]),
+
+                html.Div(
+                    [
+                        dcc.RangeSlider(
+                            id='year-range-slider',
+                            min=2005,
+                            max=2014,
+                            step=1,
+                            value=[2005, 2006],
+                            tooltip=(dict(placement='bottom')),
+                            marks={2005: '2005',
+                                   2014: '2014'}
+
+                        ),
+                        html.Div(id='output-container-range-slider')
+                    ])
+            ]
+        )
+    ]
+)
+
+graph_card = dbc.Card(
+    [
+        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+    ]
+)
+
+
+app.layout = html.Div([
+    dbc.Row([dbc.Col(user_options_card, width=3),
+             dbc.Col(graph_card, width=9)])])
