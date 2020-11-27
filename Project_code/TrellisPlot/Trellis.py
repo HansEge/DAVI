@@ -194,7 +194,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
 
             # Reset coords and zoom when loading new dataset
             global current_dataset
-            if dataset != current_dataset:
+            if dataset != current_dataset and not 'autosize' in relayout_data:
                 center_coords = {
                     'lat': start_coords[0],
                     'lon': start_coords[1]
