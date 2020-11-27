@@ -20,12 +20,12 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
-# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+#path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+#path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -38,7 +38,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SANDSTONE])
 variables = ['Speed Limit', 'Quarter', 'Time of day']
 
 color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Truck involved in accident',
-             'Other vehicle involved in accident']
+             'All vehicle types']
 
 # center coords and zoom level
 uk_center_coords = [54.832621, -4.577778, 3.5]
@@ -64,7 +64,7 @@ user_options_card = dbc.Card(
                     options=[{'label': i, 'value': i} for i in datasets_str],
                     placeholder='Pick one',
                     value=datasets_str[0],
-                    style=dict(width='70%', display='inline-block', verticalAlign="middle")
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle", marginBottom= '2em')
                 ),
 
                 html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
@@ -73,7 +73,7 @@ user_options_card = dbc.Card(
                     options=[{'label': i, 'value': i} for i in variables],
                     placeholder='Pick one',
                     value=variables[0],
-                    style=dict(width='70%', display='inline-block', verticalAlign="middle")),
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle", marginBottom= '2em')),
 
                 html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
@@ -83,9 +83,10 @@ user_options_card = dbc.Card(
                     value=variables[1],
                     style=dict(width='70%',
                                display='inline-block',
-                               verticalAlign="middle")),
+                               verticalAlign="middle",
+                               marginBottom= '2em')),
 
-                html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
+                html.P('Pick a vehicle type', className="card-text"),
                 dcc.Dropdown(
                     id='US_color',
                     options=[{'label': i, 'value': i} for i in color_var],
@@ -94,7 +95,8 @@ user_options_card = dbc.Card(
                     style=dict(
                         width='70%',
                         display='inline-block',
-                        verticalAlign="middle")
+                        verticalAlign="middle",
+                        marginBottom= '2em')
                 ),
 
                 html.Div(
@@ -103,14 +105,17 @@ user_options_card = dbc.Card(
                             id='toggle-switch',
                             on=True,
                             color="#a1d99b",
-                            label='Toggle size',
+                            label='Toggle size for number of vehicles in accidents ',
                             style=dict(
                                 display='inline-block',
-                                verticalAlign='left'
+                                verticalAlign='left',
+                                marginBottom='5em'
                             )
                         )
                     ]),
 
+
+                html.P('Select year range', className="card-text"),
                 html.Div(
                     [
                         dcc.RangeSlider(
@@ -153,7 +158,7 @@ def switcher(arg):
         'Car involved in accident': 'Car_acc',
         'Motorcycle involved in accident': 'Mc_acc',
         'Truck involved in accident': 'Truck_acc',
-        'Other vehicle involved in accident': 'Other_acc',
+        'All vehicle types': 'All_veh',
         'UK': [datasets[0], uk_center_coords],
         'US': [datasets[1], us_center_coords]
     }
