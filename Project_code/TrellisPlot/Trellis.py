@@ -48,6 +48,8 @@ us_center_coords = [38, -97, 2]
 datasets = [uk_acc, us_acc]
 datasets_str = ['UK', 'US']
 
+current_dataset = ''
+
 str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
@@ -167,14 +169,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     veh_type_str = us_color
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
-    center_coords = switcher(dataset)[1]
-
-    zoom_level = center_coords[2]
+    start_coords = switcher(dataset)[1]
 
     # used when program starts
+    zoom_level = start_coords[2]
     center_coords = {
-        'lat': center_coords[0],
-        'lon': center_coords[1],
+        'lat': start_coords[0],
+        'lon': start_coords[1]
     }
 
     if relayout_data != None:
@@ -183,6 +184,21 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
             values_view = relayout_data.values()
             value_iterator = iter(values_view)
             center_coords, zoom_level = next(value_iterator), next(value_iterator)
+
+            # Reset coords and zoom when loading new dataset
+            global current_dataset
+            if dataset != current_dataset:
+                center_coords = {
+                    'lat': start_coords[0],
+                    'lon': start_coords[1]
+                }
+                zoom_level = start_coords[2]
+                current_dataset = dataset
+
+
+
+
+
 
     # Toggle switch stuff
     if toggle:
