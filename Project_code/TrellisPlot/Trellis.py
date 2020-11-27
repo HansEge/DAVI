@@ -12,6 +12,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 
 from dash.dependencies import Input, Output, State
 
@@ -47,6 +48,8 @@ us_center_coords = [38, -97, 2]
 datasets = [uk_acc, us_acc]
 datasets_str = ['UK', 'US']
 
+current_dataset = ''
+
 str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
@@ -62,7 +65,7 @@ user_options_card = dbc.Card(
                     placeholder='Pick one',
                     value=datasets_str[0],
                     style=dict(width='70%', display='inline-block', verticalAlign="middle")
-                    ),
+                ),
 
                 html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
@@ -92,12 +95,13 @@ user_options_card = dbc.Card(
                                display='inline-block',
                                verticalAlign="middle")),
 
-
                 html.Div(
                     [
-                        html.Button('Toggle size',
-                                    id='toggle_btn',
-                                    n_clicks=0),
+                        daq.BooleanSwitch(
+                            id='toggle-switch',
+                            on=True,
+                            color="#9B51E0"
+                        )
                     ]),
 
                 html.Div(
@@ -126,10 +130,10 @@ graph_card = dbc.Card(
     ]
 )
 
-
 app.layout = html.Div([
     dbc.Row([dbc.Col(user_options_card, width=3),
              dbc.Col(graph_card, width=9)])])
+
 
 def switcher(arg):
     switch = {
@@ -149,8 +153,6 @@ def switcher(arg):
     return switch[arg]
 
 
-
-
 @app.callback(
     Output('US_graph', 'figure'),
     [Input('US_plot_x', 'value'),
@@ -158,7 +160,7 @@ def switcher(arg):
      Input('year-range-slider', 'value'),
      Input('US_color', 'value'),
      Input('dataset', 'value'),
-     Input('toggle_btn', 'n_clicks'),
+     Input('toggle-switch', 'on'),
      Input('US_graph', 'relayoutData')])
 def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle, relayout_data):
     x_params = switcher(us_plot_x)
@@ -167,31 +169,39 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     veh_type_str = us_color
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
-    center_coords = switcher(dataset)[1]
-
-    zoom_level = center_coords[2]
+    start_coords = switcher(dataset)[1]
 
     # used when program starts
+    zoom_level = start_coords[2]
     center_coords = {
-        'lat': center_coords[0],
-        'lon': center_coords[1],
+        'lat': start_coords[0],
+        'lon': start_coords[1]
     }
 
     if relayout_data != None:
-        if not'autosize' in relayout_data:
+        if not 'autosize' in relayout_data:
             center_coords.clear()
             values_view = relayout_data.values()
             value_iterator = iter(values_view)
             center_coords, zoom_level = next(value_iterator), next(value_iterator)
 
+            # Reset coords and zoom when loading new dataset
+            global current_dataset
+            if dataset != current_dataset:
+                center_coords = {
+                    'lat': start_coords[0],
+                    'lon': start_coords[1]
+                }
+                zoom_level = start_coords[2]
+                current_dataset = dataset
 
 
 
-    # Toggle button stuff
-    toggle = 2 if toggle is None else toggle
-    toggle_on = True if toggle % 2 == 0 else False
 
-    if toggle_on:
+
+
+    # Toggle switch stuff
+    if toggle:
         size_param = data['Num_veh_acc']
     else:
         size_param = 1
