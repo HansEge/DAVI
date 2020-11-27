@@ -23,8 +23,8 @@ path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Proje
 path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -242,6 +242,11 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                         legendgroup="Group1",
                         name="All other vehicle types",
                         mode='markers',
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='rgb(200,200,200)',
+                            bordercolor='rgb(0,0,0)',
+                            font=dict(family='Overpass')
+                        ),
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
                                       "Number of vehicles in accident: %{text}",
@@ -269,6 +274,11 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                         legendgroup="Group2",
                         name=veh_type_str,
                         mode='markers',
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='rgb(200,200,200)',
+                            bordercolor='rgb(0,0,0)',
+                            font=dict(family='Overpass')
+                        ),
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
                                       "Number of vehicles in accident: %{text}",
@@ -297,8 +307,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                                       )]['Lon'],
                         legendgroup="Group1",
                         showlegend=False,
-                        name="Gray",
+                        name="All other vehicle types",
                         mode='markers',
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='rgb(200,200,200)',
+                            bordercolor='rgb(0,0,0)',
+                            font=dict(family='Overpass')
+                        ),
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
                                       "Number of vehicles in accident: %{text}",
@@ -325,8 +340,13 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                                       )]['Lon'],
                         legendgroup="Group2",
                         showlegend=False,
-                        name="Red",
+                        name=veh_type_str,
                         mode='markers',
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='rgb(200,200,200)',
+                            bordercolor='rgb(0,0,0)',
+                            font=dict(family='Overpass')
+                        ),
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
                                       "Number of vehicles in accident: %{text}",

@@ -207,8 +207,10 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
                                       "Number of vehicles in accident: %{text}<br>" +
-                                      "Color: %{marker.color}",
-                        # text=us_acc.loc[(us_acc[x_params] == 1)],
+                                      "Color: %{'rgb(120,120,120)'}",
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='gold'
+                        ),
                         marker=go.scattermapbox.Marker(
                             size=uk_acc["Num_veh_acc"]+2,
                             color='rgb(120,120,120)'
@@ -237,6 +239,9 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
                         name="Red",
                         showlegend=True,
                         legendgroup="Group2",
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='rgb(0,0,0)'
+                        ),
                         text=uk_acc["Num_veh_acc"],
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
@@ -275,6 +280,9 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
                                       "Longitude: %{lon}<br>" +
                                       "Number of vehicles in accident: %{text}<br>" +
                                       "Color: %{marker.color}",
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='gold'
+                        ),
                         # text=us_acc.loc[(us_acc[x_params] == 1)],
                         marker=go.scattermapbox.Marker(
                             size=uk_acc["Num_veh_acc"] + 2,
@@ -304,6 +312,9 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
                         name="Red",
                         showlegend=False,
                         legendgroup="Group2",
+                        hoverlabel=go.scattermapbox.Hoverlabel(
+                            bgcolor='rgb(0,0,0)'
+                        ),
                         text=uk_acc["Num_veh_acc"],
                         hovertemplate="Latitude: %{lat}<br>" +
                                       "Longitude: %{lon}<br>" +
@@ -329,8 +340,10 @@ def update_figure(uk_plot_x, uk_plot_y, uk_color, years_slider):
     fig.update_layout(
         autosize=False,
         hovermode='closest',
-        title_text="Stacked Subplots"
-
+        title_text="Stacked Subplots",
+        hoverlabel=go.scattermapbox.Hoverlabel(
+            bgcolor='rgb(0,0,0)'
+        )
     )
     fig.update_mapboxes(
         bearing=0,
