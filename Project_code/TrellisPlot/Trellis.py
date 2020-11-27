@@ -20,12 +20,12 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -91,16 +91,23 @@ user_options_card = dbc.Card(
                     options=[{'label': i, 'value': i} for i in color_var],
                     placeholder='Pick one',
                     value=color_var[0],
-                    style=dict(width='70%',
-                               display='inline-block',
-                               verticalAlign="middle")),
+                    style=dict(
+                        width='70%',
+                        display='inline-block',
+                        verticalAlign="middle")
+                ),
 
                 html.Div(
                     [
                         daq.BooleanSwitch(
                             id='toggle-switch',
                             on=True,
-                            color="#9B51E0"
+                            color="#a1d99b",
+                            label='Toggle size',
+                            style=dict(
+                                display='inline-block',
+                                verticalAlign='left'
+                            )
                         )
                     ]),
 
@@ -194,11 +201,6 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
                 }
                 zoom_level = start_coords[2]
                 current_dataset = dataset
-
-
-
-
-
 
     # Toggle switch stuff
     if toggle:
