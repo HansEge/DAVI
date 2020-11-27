@@ -99,13 +99,13 @@ user_options_card = dbc.Card(
                         marginBottom= '2em')
                 ),
 
+                html.P('Toggle size for number of vehicles in accidents', className="card-text"),
                 html.Div(
                     [
                         daq.BooleanSwitch(
                             id='toggle-switch',
                             on=True,
                             color="#a1d99b",
-                            label='Toggle size for number of vehicles in accidents ',
                             style=dict(
                                 display='inline-block',
                                 verticalAlign='left',
