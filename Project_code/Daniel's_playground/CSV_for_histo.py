@@ -11,13 +11,16 @@ uk_time_data = pd.read_csv(path_time_data + "Clean_time_data.csv")
 uk_acc = pd.read_csv(path_uk + "Accidents0515.csv")
 
 df = pd.DataFrame({'Accident_Index': uk_acc["Accident_Index"],
+                   'Lat': uk_acc["Latitude"],
+                   'Lon': uk_acc["Longitude"],
                    'Speed_limit': uk_acc["Speed_limit"],
                    'Num_veh_acc': uk_acc["Number_of_Vehicles"]})
 
 df = df.loc[df["Accident_Index"].isin(uk_time_data["Accident_Index"])]
 df = df.reset_index()
 
-df_final = pd.DataFrame({'Acc_index': uk_time_data["Accident_Index"],
+df_final = pd.DataFrame({'Lat': df["Lat"],
+                         'Lon': df["Lon"],
                          'Year': uk_time_data["Year"],
                          'Month': uk_time_data["Month"],
                          'Day': uk_time_data["Day"],
@@ -26,12 +29,13 @@ df_final = pd.DataFrame({'Acc_index': uk_time_data["Accident_Index"],
                          'Num_veh_acc': df["Num_veh_acc"]})
 
 # Make final CSV file with correct names
-with open('UK_cleaned_histo.csv', 'w', newline='') as file:
+with open('UK_cleaned_histo1.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Acc_index', 'Year', 'Month', 'Day',
+    writer.writerow(['Lat', 'Lon', 'Year', 'Month', 'Day',
                      'Hour', 'Speed_limit', 'Num_veh_acc'])
     for i in range(len(df_final)):
-        writer.writerow([df_final["Acc_index"].values[i],
+        writer.writerow([df_final["Lat"].values[i],
+                         df_final["Lon"].values[i],
                          df_final["Year"].values[i],
                          df_final["Month"].values[i],
                          df_final["Day"].values[i],
