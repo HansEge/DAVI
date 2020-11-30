@@ -30,6 +30,9 @@ path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Proje
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
+uk_histo = pd.read_csv(path_uk + "UK_cleaned_histo.csv")
+us_histo = pd.read_csv(path_uk + "US_cleaned_histo.csv")
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -138,13 +141,25 @@ user_options_card = dbc.Card(
 
 graph_card = dbc.Card(
     [
-        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={}),
+        # dcc.Graph(id='histogram', style={'display': 'internal-block'}, figure={})
+    ]
+)
+
+test_card = dbc.Card(
+    [
+        # html.Pre(id='lasso', style={'overflowY': 'scroll', 'height': '100vh'})
+        dcc.Graph(id='histogram', style={'display': 'internal-block'}, figure={})
     ]
 )
 
 app.layout = html.Div([
     dbc.Row([dbc.Col(user_options_card, width=3),
-             dbc.Col(graph_card, width=9)])])
+             dbc.Col(graph_card, width=9)]
+            ),
+    dbc.Row([dbc.Col(test_card, width=12)])
+    ]
+)
 
 
 def switcher(arg):
@@ -191,7 +206,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     }
 
     if relayout_data != None:
-        if not 'autosize' in relayout_data:
+        if not 'autosize' in relayout_data and not 'dragmode' in relayout_data:
             center_coords.clear()
             values_view = relayout_data.values()
             value_iterator = iter(values_view)
@@ -383,7 +398,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     fig.update_layout(
         autosize=False,
         hovermode='closest',
-        title_text="Stacked Subplots"
+        title_text="Trellis plot"
     )
     fig.update_mapboxes(
         bearing=0,
@@ -401,6 +416,41 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     fig.update_layout(transition_duration=500)
 
     return fig
+
+
+@app.callback(
+    Output('histogram', 'figure'),
+    [Input('US_graph', 'selectedData'),
+def update_hist(box_select_vals):
+
+    fig = px.histogram()
+
+    if box_select_vals != None:
+
+        values_view = box_select_vals.values()
+        value_iterator = iter(values_view)
+        selected_points = next(value_iterator)
+
+        lat = []
+        lon = []
+
+        for i in range(len(selected_points)):
+            lat.append(selected_points[i]['lat'])
+            lon.append(selected_points[i]['lon'])
+
+        coords = pd.DataFrame({'lat': lat,
+                               'lon': lon})
+
+        fig = px.histogram(uk_histo, x=uk_histo.loc[
+            ((uk_histo['lat'] == coords['lat']) &
+             (uk_histo['lon'] == coords['lon']))])
+
+        return fig
+
+    return fig
+
+
+
 
 
 app.run_server(debug=True)
