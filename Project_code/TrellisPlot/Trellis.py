@@ -20,19 +20,18 @@ px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzM
 mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew"
 
 # Daniels path
-path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-#path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-#path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
 uk_histo = pd.read_csv(path_uk + "UK_cleaned_histo.csv")
 us_histo = pd.read_csv(path_uk + "US_cleaned_histo.csv")
-
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -67,7 +66,7 @@ user_options_card = dbc.Card(
                     options=[{'label': i, 'value': i} for i in datasets_str],
                     placeholder='Pick one',
                     value=datasets_str[0],
-                    style=dict(width='70%', display='inline-block', verticalAlign="middle", marginBottom= '2em')
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle", marginBottom='2em')
                 ),
 
                 html.P('Pick the parameter that determines the columns in the trellis-plot', className="card-text"),
@@ -76,7 +75,7 @@ user_options_card = dbc.Card(
                     options=[{'label': i, 'value': i} for i in variables],
                     placeholder='Pick one',
                     value=variables[0],
-                    style=dict(width='70%', display='inline-block', verticalAlign="middle", marginBottom= '2em')),
+                    style=dict(width='70%', display='inline-block', verticalAlign="middle", marginBottom='2em')),
 
                 html.P('Pick the parameter that determines the rows in the trellis-plot', className="card-text"),
                 dcc.Dropdown(
@@ -87,7 +86,7 @@ user_options_card = dbc.Card(
                     style=dict(width='70%',
                                display='inline-block',
                                verticalAlign="middle",
-                               marginBottom= '2em')),
+                               marginBottom='2em')),
 
                 html.P('Pick a vehicle type', className="card-text"),
                 dcc.Dropdown(
@@ -99,7 +98,7 @@ user_options_card = dbc.Card(
                         width='70%',
                         display='inline-block',
                         verticalAlign="middle",
-                        marginBottom= '2em')
+                        marginBottom='2em')
                 ),
 
                 html.P('Toggle size for number of vehicles in accidents', className="card-text"),
@@ -116,7 +115,6 @@ user_options_card = dbc.Card(
                             )
                         )
                     ]),
-
 
                 html.P('Select year range', className="card-text"),
                 html.Div(
@@ -158,7 +156,7 @@ app.layout = html.Div([
              dbc.Col(graph_card, width=9)]
             ),
     dbc.Row([dbc.Col(test_card, width=12)])
-    ]
+]
 )
 
 
@@ -174,8 +172,8 @@ def switcher(arg):
         'Motorcycle involved in accident': 'Mc_acc',
         'Truck involved in accident': 'Truck_acc',
         'All vehicle types': 'All_veh',
-        'UK': [datasets[0], uk_center_coords],
-        'US': [datasets[1], us_center_coords]
+        'UK': [datasets[0], uk_center_coords, uk_histo],
+        'US': [datasets[1], us_center_coords, us_histo]
     }
     return switch[arg]
 
@@ -417,15 +415,29 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
 
     return fig
 
+def histo_switcher(arg):
+    switch = {
+        'Speed Limit': 'Speed_limit',
+        'Time of day': 'Hour',
+        'Quarter': 'Month',
+    }
+    return switch[arg]
 
 @app.callback(
     Output('histogram', 'figure'),
     [Input('US_graph', 'selectedData'),
-def update_hist(box_select_vals):
+     Input('dataset', 'value'),
+     Input('US_plot_x', 'value')])
+
+
+def update_hist(box_select_vals, dataset, param):
 
     fig = px.histogram()
 
     if box_select_vals != None:
+
+        filter = histo_switcher(param)
+        data = switcher(dataset)[2]
 
         values_view = box_select_vals.values()
         value_iterator = iter(values_view)
@@ -438,19 +450,22 @@ def update_hist(box_select_vals):
             lat.append(selected_points[i]['lat'])
             lon.append(selected_points[i]['lon'])
 
-        coords = pd.DataFrame({'lat': lat,
-                               'lon': lon})
+        coords = pd.DataFrame({'Lat': lat,
+                               'Lon': lon})
 
-        fig = px.histogram(uk_histo, x=uk_histo.loc[
-            ((uk_histo['lat'] == coords['lat']) &
-             (uk_histo['lon'] == coords['lon']))])
+        data_list = []
+
+        for k in range(len(coords)):
+            data_list.append(data.loc[((data['Lat'] == coords['Lat'][k]) &
+                                       (data['Lon'] == coords['Lon'][k]))])
+
+        data = pd.concat(data_list, ignore_index=True)
+
+        fig = px.histogram(data, x=filter)
 
         return fig
 
     return fig
-
-
-
 
 
 app.run_server(debug=True)
