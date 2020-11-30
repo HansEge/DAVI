@@ -22,7 +22,8 @@ for f in all_filenames:
 
     if 'YEAR' in df.columns:
         if df['YEAR'][0] < 2008:
-            new_df = pd.DataFrame({'Acc_index': df['ST_CASE'],
+            new_df = pd.DataFrame({'Lat': df['latitude'],
+                                   'Lon': df['longitud'],
                                    'Year': df['YEAR'],
                                    'Month': df['MONTH'],
                                    'Day': df['DAY'],
@@ -30,7 +31,8 @@ for f in all_filenames:
                                    'Speed_limit': df['SP_LIMIT']})
 
         elif 2007 < df['YEAR'][0] < 2010:
-            new_df = pd.DataFrame({'Acc_index': df['ST_CASE'],
+            new_df = pd.DataFrame({'Lat': df['LATITUDE'],
+                                   'Lon': df['LONGITUD'],
                                    'Year': df['YEAR'],
                                    'Month': df['MONTH'],
                                    'Day': df['DAY'],
@@ -38,7 +40,8 @@ for f in all_filenames:
                                    'Speed_limit': df['SP_LIMIT']})
 
         if df['YEAR'][0] > 2009:
-            new_df = pd.DataFrame({'Acc_index': df['ST_CASE'],
+            new_df = pd.DataFrame({'Lat': df['LATITUDE'],
+                                   'Lon': df['LONGITUD'],
                                    'Year': df['YEAR'],
                                    'Month': df['MONTH'],
                                    'Day': df['DAY'],
@@ -78,9 +81,10 @@ combined_df = combined_df.reset_index()
 # Make new cleaned CSV file
 with open('US_cleaned_histo.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Acc_index', 'Year', 'Month', 'Day', 'Hour', 'Speed_limit', 'Num_veh_acc'])
+    writer.writerow(['Lat', 'Lon', 'Year', 'Month', 'Day', 'Hour', 'Speed_limit', 'Num_veh_acc'])
     for i in range(len(combined_df)):
-        writer.writerow([combined_df['Acc_index'][i],
+        writer.writerow([combined_df['Lat'][i],
+                         combined_df['Lon'][i],
                          combined_df['Year'][i],
                          combined_df['Month'][i],
                          combined_df['Day'][i],
