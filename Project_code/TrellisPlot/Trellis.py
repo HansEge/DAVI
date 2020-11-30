@@ -420,7 +420,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
 
 @app.callback(
     Output('histogram', 'figure'),
-    [Input('US_graph', 'selectedData'),
+    [Input('US_graph', 'selectedData')])
 def update_hist(box_select_vals):
 
     fig = px.histogram()
