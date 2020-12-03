@@ -415,6 +415,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
 
     return fig
 
+
 def histo_switcher(arg):
     switch = {
         'Speed Limit': 'Speed_limit',
@@ -423,13 +424,12 @@ def histo_switcher(arg):
     }
     return switch[arg]
 
+
 @app.callback(
     Output('histogram', 'figure'),
     [Input('US_graph', 'selectedData'),
      Input('dataset', 'value'),
      Input('US_plot_x', 'value')])
-
-
 def update_hist(box_select_vals, dataset, param):
 
     fig = px.histogram()
