@@ -50,7 +50,12 @@ us_center_coords = [38, -97, 2]
 datasets = [uk_acc, us_acc]
 datasets_str = ['UK', 'US']
 
-current_dataset = ''
+current_dataset = 'UK'
+current_coords = {
+    'lat': uk_center_coords[0],
+    'lon': uk_center_coords[1],
+    'zoom': uk_center_coords[2]
+}
 
 str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourth quarter']
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
@@ -136,17 +141,29 @@ user_options_card = dbc.Card(
         )
     ]
 )
-
-graph_card = dbc.Card(
+histo_option_card = dbc.Card(
     [
-        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={}),
-        # dcc.Graph(id='histogram', style={'display': 'internal-block'}, figure={})
+        html.P('Pick a parameter for the x-axis', className="card-text"),
+        dcc.Dropdown(
+            id='histo_x',
+            options=[{'label': i, 'value': i} for i in variables],
+            placeholder='Pick one',
+            value=variables[1],
+            style=dict(width='70%',
+                       display='inline-block',
+                       verticalAlign="middle",
+                       marginBottom='2em'))
     ]
 )
 
-test_card = dbc.Card(
+graph_card = dbc.Card(
     [
-        # html.Pre(id='lasso', style={'overflowY': 'scroll', 'height': '100vh'})
+        dcc.Graph(id='US_graph', style={'display': 'internal-block'}, figure={})
+    ]
+)
+
+histo_card = dbc.Card(
+    [
         dcc.Graph(id='histogram', style={'display': 'internal-block'}, figure={})
     ]
 )
@@ -155,7 +172,8 @@ app.layout = html.Div([
     dbc.Row([dbc.Col(user_options_card, width=3),
              dbc.Col(graph_card, width=9)]
             ),
-    dbc.Row([dbc.Col(test_card, width=12)])
+    dbc.Row([dbc.Col(histo_option_card, width=3),
+             dbc.Col(histo_card, width=9)])
 ]
 )
 
@@ -196,29 +214,27 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
     data = switcher(dataset)[0]
     start_coords = switcher(dataset)[1]
 
-    # used when program starts
-    zoom_level = start_coords[2]
-    center_coords = {
-        'lat': start_coords[0],
-        'lon': start_coords[1]
-    }
+    global current_coords
+    global current_dataset
+
+    # Reset coords and zoom when loading new dataset
+    if dataset != current_dataset:
+        current_coords = {
+            'lat': start_coords[0],
+            'lon': start_coords[1],
+            'zoom': start_coords[2]
+        }
+        current_dataset = dataset
+
 
     if relayout_data != None:
         if not 'autosize' in relayout_data and not 'dragmode' in relayout_data:
-            center_coords.clear()
             values_view = relayout_data.values()
             value_iterator = iter(values_view)
-            center_coords, zoom_level = next(value_iterator), next(value_iterator)
+            current_coords, zoom_level = next(value_iterator), next(value_iterator)
+            current_coords['zoom'] = zoom_level
 
-            # Reset coords and zoom when loading new dataset
-            global current_dataset
-            if dataset != current_dataset and not 'autosize' in relayout_data:
-                center_coords = {
-                    'lat': start_coords[0],
-                    'lon': start_coords[1]
-                }
-                zoom_level = start_coords[2]
-                current_dataset = dataset
+
 
     # Toggle switch stuff
     if toggle:
@@ -402,11 +418,11 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
         bearing=0,
         accesstoken=mapbox_access_token,
         center=dict(
-            lat=center_coords['lat'],
-            lon=center_coords['lon']
+            lat=current_coords['lat'],
+            lon=current_coords['lon']
         ),
         pitch=0,
-        zoom=zoom_level
+        zoom=current_coords['zoom']
     )
 
     fig.update_yaxes()
@@ -429,9 +445,8 @@ def histo_switcher(arg):
     Output('histogram', 'figure'),
     [Input('US_graph', 'selectedData'),
      Input('dataset', 'value'),
-     Input('US_plot_x', 'value')])
+     Input('histo_x', 'value')])
 def update_hist(box_select_vals, dataset, param):
-
     fig = px.histogram()
 
     if box_select_vals != None:
