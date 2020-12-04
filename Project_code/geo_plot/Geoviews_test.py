@@ -7,13 +7,14 @@ import dash_html_components as html
 
 from dash.dependencies import Input, Output
 
+# TODO colorbrewer
 
 px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew")
 
 path_uk = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\UK_car_accidents\\"
 path_us = "C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\Datasets\\US_new\\2015\\"
 
-uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=100000)
+uk_acc = pd.read_csv(path_uk + "Accidents0515.csv", nrows=500000)
 us_acc = pd.read_csv(path_us + "accident.csv")
 
 
