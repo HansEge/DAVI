@@ -36,8 +36,7 @@ path_us = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\P
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
 
-us_acc = us_acc.astype({'Acc_index': 'int32',
-                     'Num_veh_acc': 'int32',
+us_acc = us_acc.astype({'Num_veh_acc': 'int32',
                      'Car_acc': 'int32',
                      'Mc_acc': 'int32',
                      'Truck_acc': 'int32',
@@ -230,7 +229,6 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
     data = switcher(dataset)[0]
     start_coords = switcher(dataset)[1]
 
-    data = data.drop('Acc_index', axis=1)
 
     global current_coords
     global current_dataset
