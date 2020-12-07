@@ -504,4 +504,4 @@ def update_hist(box_select_vals, dataset, param):
     return fig
 
 
-app.run_server(debug=True)
+app.run_server()
