@@ -12,7 +12,7 @@ df_list = []
 
 # Used to get speed limit from vehicle.csv because data has different structure for different years :(
 index_for_speed = 2009
-
+df_list_index = 0
 for f in all_filenames:
     df = pd.read_csv(f)
     # Get stuff from ACCIDENT.CSV
@@ -231,14 +231,6 @@ for f in all_filenames:
                                                                                 fill_value=1)
         trucks_involved.insert(1, 'ST_CASE', df['ST_CASE'])
 
-        # Only look at other vehicles here
-        other_involved = pd.DataFrame({'BODY_TYP': df['BODY_TYP'], 'ST_CASE': df['ST_CASE']})
-        tmp = other_involved.query('(11 < BODY_TYP and 17 > BODY_TYP) or (17 < BODY_TYP and 30 > BODY_TYP) or '
-                                   '(39 < BODY_TYP and 60 > BODY_TYP) or (89 < BODY_TYP and 100 > BODY_TYP)')[
-            'BODY_TYP']
-        other_involved = pd.DataFrame({'Other_involved': tmp.reindex(range(len(other_involved)), fill_value=0)})
-        other_involved = other_involved.query('Other_involved == 0').reindex(range(len(other_involved)), fill_value=1)
-        other_involved.insert(1, 'ST_CASE', df['ST_CASE'])
 
         # Create final dataframes and add to dataframe list
         car_involved_final = pd.DataFrame(np.zeros((len(car_involved.drop_duplicates(subset=('ST_CASE')).reset_index(
@@ -247,11 +239,11 @@ for f in all_filenames:
             subset=('ST_CASE')).reset_index(drop=True)), 1)), columns=['Motorcycle_involved_in_accident'])
         trucks_involved_final = pd.DataFrame(np.zeros((len(trucks_involved.drop_duplicates(
             subset=('ST_CASE')).reset_index(drop=True)), 1)), columns=['Truck_involved_in_accident'])
-        other_involved_final = pd.DataFrame(np.zeros((len(other_involved.drop_duplicates(
-            subset=('ST_CASE')).reset_index(drop=True)), 1)), columns=['Other_vehicle_involved_in_accident'])
 
         # Get all ST_CASE ids
-        ids = car_involved.drop_duplicates(subset=('ST_CASE')).reset_index(drop=True)['ST_CASE']
+        # ids = car_involved.drop_duplicates(subset=('ST_CASE')).reset_index(drop=True)['ST_CASE']
+        ids = df['ST_CASE'].drop_duplicates().reset_index(drop=True)
+
 
         # TODO: Vectorize this operation
         for i in range(len(ids)):
@@ -263,10 +255,10 @@ for f in all_filenames:
                     motorcycle_involved_final.at[i, 'Motorcycle_involved_in_accident'] = 1
                 if trucks_involved[trucks_involved.ST_CASE == id].iloc[k]['Trucks_involved'] != 0:
                     trucks_involved_final.at[i, 'Truck_involved_in_accident'] = 1
-                if other_involved[other_involved.ST_CASE == id].iloc[k]['Other_involved'] != 0:
-                    other_involved_final.at[i, 'Other_involved_in_accident'] = 1
+
 
         print("Done with", f)
+        df_list_index = df_list_index + 1
 
         # Add stuff to dataframe list
         for i in range(len(df_list)):
@@ -280,8 +272,6 @@ for f in all_filenames:
                                   motorcycle_involved_final['Motorcycle_involved_in_accident'], True)
                 df_list[i].insert(6, 'Truck_involved_in_accident', trucks_involved_final['Truck_involved_in_accident'],
                                   True)
-                df_list[i].insert(7, 'Other_involved_in_accident', other_involved_final['Other_involved_in_accident'],
-                                  True)
 
 # Concat all dataframes from list and drop all NaN rows of dataset
 combined_df = pd.concat(df_list, ignore_index=True)
@@ -292,8 +282,7 @@ combined_df = combined_df.reset_index()
 with open('US_cleaned.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Acc_index', 'Lat', 'Lon', 'Num_veh_acc', 'Car_acc',
-                     'Mc_acc', 'Truck_acc', 'Other_acc',
-                     'Year', 'Quarter', 'T_day', 'Speed_limit'])
+                     'Mc_acc', 'Truck_acc', 'Year', 'Quarter', 'T_day', 'Speed_limit'])
     for i in range(len(combined_df)):
         writer.writerow([combined_df['ST_CASE'][i],
                          combined_df['Latitude'][i],
@@ -302,9 +291,21 @@ with open('US_cleaned.csv', 'w', newline='') as file:
                          combined_df['Car_involved_in_accident'][i],
                          combined_df['Motorcycle_involved_in_accident'][i],
                          combined_df['Truck_involved_in_accident'][i],
-                         combined_df['Other_involved_in_accident'][i],
                          combined_df['Year'][i],
                          combined_df['Quarter'][i],
                          combined_df['T_day'][i],
                          combined_df['Speed_limit'][i]]
                         )
+
+
+def sort_veh_type():
+
+    # Create final dataframes and add to dataframe list
+    car_involved_final = pd.DataFrame(np.zeros((len(car_involved.drop_duplicates(subset=('ST_CASE')).reset_index(
+        drop=True)), 1)), columns=['Car_involved_in_accident'])
+    motorcycle_involved_final = pd.DataFrame(np.zeros((len(motorcycle_involved.drop_duplicates(
+        subset=('ST_CASE')).reset_index(drop=True)), 1)), columns=['Motorcycle_involved_in_accident'])
+    trucks_involved_final = pd.DataFrame(np.zeros((len(trucks_involved.drop_duplicates(
+        subset=('ST_CASE')).reset_index(drop=True)), 1)), columns=['Truck_involved_in_accident'])
+
+    return

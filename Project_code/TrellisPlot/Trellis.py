@@ -35,6 +35,17 @@ path_us = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\P
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
+
+us_acc = us_acc.astype({'Acc_index': 'int32',
+                     'Num_veh_acc': 'int32',
+                     'Car_acc': 'int32',
+                     'Mc_acc': 'int32',
+                     'Truck_acc': 'int32',
+                     'Year': 'int32',
+                     'Quarter': 'int32',
+                     'T_day': 'int32',
+                     'Speed_limit': 'int32'})
+
 uk_histo = pd.read_csv(path_uk + "UK_cleaned_histo.csv")
 us_histo = pd.read_csv(path_uk + "US_cleaned_histo.csv")
 
@@ -211,14 +222,15 @@ def switcher(arg):
      Input('dataset', 'value'),
      Input('toggle-switch', 'on'),
      Input('US_graph', 'relayoutData')])
-def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle, relayout_data):
+def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayout_data):
     x_params = switcher(us_plot_x)
     y_params = switcher(us_plot_y)
-    years = years_slider
     veh_type_str = us_color
     us_color = switcher(us_color)
     data = switcher(dataset)[0]
     start_coords = switcher(dataset)[1]
+
+    data = data.drop('Acc_index', axis=1)
 
     global current_coords
     global current_dataset
@@ -269,8 +281,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
         horizontal_spacing=0.01,
         vertical_spacing=0.01,
         column_titles=x_params[1],
-        row_titles=y_params[1],
-        shared_xaxes='rows'
+        row_titles=y_params[1]
     )
 
     for i in range(n_rows):
@@ -433,7 +444,7 @@ def update_figure(us_plot_x, us_plot_y, years_slider, us_color, dataset, toggle,
 
     fig.update_yaxes()
     fig.update_xaxes()
-    fig.update_layout(transition_duration=500)
+    fig.update_layout()
 
     return fig
 
