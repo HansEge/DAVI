@@ -24,18 +24,19 @@ mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeG
 # path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus laptop
-path_uk = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
-path_us = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
+# path_uk = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
+# path_us = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
 
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
 us_acc = pd.read_csv(path_us + "US_cleaned.CSV")
 
+'''
 us_acc = us_acc.astype({'Num_veh_acc': 'int32',
                      'Car_acc': 'int32',
                      'Mc_acc': 'int32',
@@ -44,7 +45,7 @@ us_acc = us_acc.astype({'Num_veh_acc': 'int32',
                      'Quarter': 'int32',
                      'T_day': 'int32',
                      'Speed_limit': 'int32'})
-
+'''
 uk_histo = pd.read_csv(path_uk + "UK_cleaned_histo.csv")
 us_histo = pd.read_csv(path_uk + "US_cleaned_histo.csv")
 
@@ -229,6 +230,8 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
     data = switcher(dataset)[0]
     start_coords = switcher(dataset)[1]
 
+    # Used for size of dots
+    scale = 0.5
 
     global current_coords
     global current_dataset
@@ -313,7 +316,7 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=size_param + 2,
+                            size=size_param + current_coords['zoom']*scale,
                             color='rgb(120,120,120)'
                         )),
                     row=i + 1, col=k + 1
@@ -345,7 +348,7 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=size_param + 2,
+                            size=size_param + current_coords['zoom']*scale,
                             color='rgb(255,0,0)'
 
                         )),
@@ -380,7 +383,7 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=size_param + 2,
+                            size=size_param + current_coords['zoom']*scale,
                             color='rgb(120,120,120)'
                         )),
                     row=i + 1, col=k + 1
@@ -413,7 +416,7 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
                                       "Number of vehicles in accident: %{text}",
                         text=data['Num_veh_acc'],
                         marker=go.scattermapbox.Marker(
-                            size=size_param + 2,
+                            size=size_param + current_coords['zoom']*scale,
                             color='rgb(255,0,0)'
 
                         )),
@@ -504,4 +507,4 @@ def update_hist(box_select_vals, dataset, param):
     return fig
 
 
-app.run_server()
+app.run_server(debug=True)
