@@ -27,7 +27,7 @@ mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeG
 # path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 # path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
 
-# Stinus labtop
+# Stinus laptop
 path_uk = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
 path_us = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
 
