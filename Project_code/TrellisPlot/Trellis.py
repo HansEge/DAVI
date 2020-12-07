@@ -24,8 +24,13 @@ mapbox_access_token = "pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeG
 # path_us = "C:\\Users\\danie\\Desktop\\Skole\\DataVisualization\\Git\\DAVI\\Project_code\\Cleaned_data\\"
 
 # Stinus path
-path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
-path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_uk = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+# path_us = "C:\\Users\\stinu\\Desktop\\DAVI\\GIT\\DAVI\\Project_code\\Cleaned_data\\"
+
+# Stinus labtop
+path_uk = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
+path_us = 'C:\\Users\\stinu\\OneDrive\\Desktop\\Computerteknologi\\DAVI\\DAVI\\Project_code\\Cleaned_data\\'
+
 
 # uk_acc = pd.read_csv(path_uk + "clean_UK_Data.csv")
 uk_acc = pd.read_csv(path_uk + "UK_cleaned.csv")
@@ -38,6 +43,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SANDSTONE])
 
 variables = ['Speed Limit', 'Quarter', 'Time of day']
+variables_histo = ['Speed Limit', 'Quarter', 'Time of day', 'Year']
 
 color_var = ['Car involved in accident', 'Motorcycle involved in accident', 'Truck involved in accident',
              'All vehicle types']
@@ -146,9 +152,9 @@ histo_option_card = dbc.Card(
         html.P('Pick a parameter for the x-axis', className="card-text"),
         dcc.Dropdown(
             id='histo_x',
-            options=[{'label': i, 'value': i} for i in variables],
+            options=[{'label': i, 'value': i} for i in variables_histo],
             placeholder='Pick one',
-            value=variables[1],
+            value=variables_histo[3],
             style=dict(width='70%',
                        display='inline-block',
                        verticalAlign="middle",
@@ -437,9 +443,12 @@ def histo_switcher(arg):
         'Speed Limit': 'Speed_limit',
         'Time of day': 'Hour',
         'Quarter': 'Month',
+        'Year': 'Year'
     }
     return switch[arg]
 
+
+current_selected_points = dict()
 
 @app.callback(
     Output('histogram', 'figure'),
@@ -453,32 +462,35 @@ def update_hist(box_select_vals, dataset, param):
 
         filter = histo_switcher(param)
         data = switcher(dataset)[2]
+        global current_selected_points
 
         values_view = box_select_vals.values()
         value_iterator = iter(values_view)
         selected_points = next(value_iterator)
 
-        lat = []
-        lon = []
+        if current_selected_points != selected_points:
+            current_selected_points = selected_points
+            lat = []
+            lon = []
 
-        for i in range(len(selected_points)):
-            lat.append(selected_points[i]['lat'])
-            lon.append(selected_points[i]['lon'])
+            for i in range(len(selected_points)):
+                lat.append(selected_points[i]['lat'])
+                lon.append(selected_points[i]['lon'])
 
-        coords = pd.DataFrame({'Lat': lat,
-                               'Lon': lon})
+            coords = pd.DataFrame({'Lat': lat,
+                                   'Lon': lon})
 
-        data_list = []
+            data_list = []
 
-        for k in range(len(coords)):
-            data_list.append(data.loc[((data['Lat'] == coords['Lat'][k]) &
-                                       (data['Lon'] == coords['Lon'][k]))])
+            for k in range(len(coords)):
+                data_list.append(data.loc[((data['Lat'] == coords['Lat'][k]) &
+                                           (data['Lon'] == coords['Lon'][k]))])
 
-        data = pd.concat(data_list, ignore_index=True)
+            data = pd.concat(data_list, ignore_index=True)
 
-        fig = px.histogram(data, x=filter)
+            fig = px.histogram(data, x=filter)
 
-        return fig
+            return fig
 
     return fig
 
