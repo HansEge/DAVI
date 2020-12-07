@@ -7,6 +7,7 @@ import dash_html_components as html
 
 from dash.dependencies import Input, Output
 
+# TODO colorbrewer
 
 px.set_mapbox_access_token("pk.eyJ1IjoiaGFuc2VnZSIsImEiOiJja2dtMmU1cDEycmZjMnlzMXoyeGtlN3E2In0.I2uGd7CT-xoOOdDEAFoyew")
 
