@@ -236,6 +236,13 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
     global current_coords
     global current_dataset
 
+    if relayout_data != None:
+        if not 'autosize' in relayout_data and not 'dragmode' in relayout_data:
+            values_view = relayout_data.values()
+            value_iterator = iter(values_view)
+            current_coords, zoom_level = next(value_iterator), next(value_iterator)
+            current_coords['zoom'] = zoom_level
+
     # Reset coords and zoom when loading new dataset
     if dataset != current_dataset:
         current_coords = {
@@ -244,16 +251,6 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
             'zoom': start_coords[2]
         }
         current_dataset = dataset
-
-
-    if relayout_data != None:
-        if not 'autosize' in relayout_data and not 'dragmode' in relayout_data:
-            values_view = relayout_data.values()
-            value_iterator = iter(values_view)
-            current_coords, zoom_level = next(value_iterator), next(value_iterator)
-            current_coords['zoom'] = zoom_level
-
-
 
     # Toggle switch stuff
     if toggle:
@@ -460,7 +457,6 @@ def histo_switcher(arg):
     return switch[arg]
 
 
-current_selected_points = dict()
 
 @app.callback(
     Output('histogram', 'figure'),
@@ -480,29 +476,34 @@ def update_hist(box_select_vals, dataset, param):
         value_iterator = iter(values_view)
         selected_points = next(value_iterator)
 
-        if current_selected_points != selected_points:
-            current_selected_points = selected_points
-            lat = []
-            lon = []
+        lat = []
+        lon = []
 
-            for i in range(len(selected_points)):
-                lat.append(selected_points[i]['lat'])
-                lon.append(selected_points[i]['lon'])
+        for i in range(len(selected_points)):
+            lat.append(selected_points[i]['lat'])
+            lon.append(selected_points[i]['lon'])
 
-            coords = pd.DataFrame({'Lat': lat,
-                                   'Lon': lon})
+        coords = pd.DataFrame({'Lat': lat,
+                               'Lon': lon})
 
-            data_list = []
+        data_list = []
 
-            for k in range(len(coords)):
-                data_list.append(data.loc[((data['Lat'] == coords['Lat'][k]) &
-                                           (data['Lon'] == coords['Lon'][k]))])
+        for k in range(len(coords)):
+            data_list.append(data.loc[((data['Lat'] == coords['Lat'][k]) &
+                                       (data['Lon'] == coords['Lon'][k]))])
 
-            data = pd.concat(data_list, ignore_index=True)
+        new_data = pd.concat(data_list, ignore_index=True)
 
-            fig = px.histogram(data, x=filter)
+        fig = px.histogram(new_data, x=filter, nbins=len(data[filter].unique()))
+        fig.update_layout(bargap=0.2)
+        fig.update_xaxes(type='category')
 
-            return fig
+        if filter == 'Hour':
+            # bins = 0.5*(bins[:-1] + bins[1:])
+            fig = px.bar(x=range(new_data['Hour'].unique().shape[0]), y=new_data['Hour'].value_counts().sort_index(),
+                         labels={'x':'Time of day [24hr]', 'y':'count'})
+
+        return fig
 
     return fig
 
