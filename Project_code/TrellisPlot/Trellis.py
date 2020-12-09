@@ -78,6 +78,20 @@ str_quarter_titles = ['First quarter', 'Second Quarter', 'Third quarter', 'Fourt
 str_T_day_titles = ['10pm - 5am', '6am - 1pm', '2pm - 9pm']
 str_speed_limit_titles = ['0mph - 35mph', '36mph - 59mph', '60mph - 100mph']
 
+histo_option_card = dbc.Card(
+    [
+        html.P('Pick a parameter for the x-axis', className="card-text"),
+        dcc.Dropdown(
+            id='histo_x',
+            options=[{'label': i, 'value': i} for i in variables_histo],
+            placeholder='Pick one',
+            value=variables_histo[3],
+            style=dict(width='70%',
+                       display='inline-block',
+                       verticalAlign="middle",
+                       marginBottom='2em'))
+    ]
+)
 user_options_card = dbc.Card(
     [
         dbc.CardBody(
@@ -128,7 +142,7 @@ user_options_card = dbc.Card(
                     [
                         daq.BooleanSwitch(
                             id='toggle-switch',
-                            on=True,
+                            on=False,
                             color="#a1d99b",
                             style=dict(
                                 display='inline-block',
@@ -156,20 +170,6 @@ user_options_card = dbc.Card(
                     ])
             ]
         )
-    ]
-)
-histo_option_card = dbc.Card(
-    [
-        html.P('Pick a parameter for the x-axis', className="card-text"),
-        dcc.Dropdown(
-            id='histo_x',
-            options=[{'label': i, 'value': i} for i in variables_histo],
-            placeholder='Pick one',
-            value=variables_histo[3],
-            style=dict(width='70%',
-                       display='inline-block',
-                       verticalAlign="middle",
-                       marginBottom='2em'))
     ]
 )
 
@@ -499,7 +499,7 @@ def update_hist(box_select_vals, dataset, param):
                      labels=dict(x=filter, y='Count'))
 
         fig.update_layout(bargap=0.2)
-        
+
         return fig
 
     return fig
