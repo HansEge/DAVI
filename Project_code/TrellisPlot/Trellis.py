@@ -499,14 +499,10 @@ def update_hist(box_select_vals, dataset, param):
                      labels=dict(x=filter, y='Count'))
 
         fig.update_layout(bargap=0.2)
-        if filter == 'Hour' and len(new_data) > 0:
-            # bins = 0.5*(bins[:-1] + bins[1:])
-            fig = px.bar(new_data, x=range(new_data['Hour'].unique().shape[0]), y=new_data['Hour'].value_counts().sort_index())
-                         #labels={'x':'Time of day [24hr]', 'y':'count'})
-
+        
         return fig
 
     return fig
 
 
-app.run_server(debug=True)
+app.run_server(debug=False)
