@@ -426,8 +426,7 @@ def update_figure(us_plot_x, us_plot_y, years, us_color, dataset, toggle, relayo
 
     fig.update_layout(
         autosize=False,
-        hovermode='closest',
-        title_text="Trellis plot"
+        hovermode='closest'
     )
     fig.update_mapboxes(
         bearing=0,
