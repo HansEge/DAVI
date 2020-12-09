@@ -498,7 +498,7 @@ def update_hist(box_select_vals, dataset, param):
         fig.update_layout(bargap=0.2)
         fig.update_xaxes(type='category')
 
-        if filter == 'Hour':
+        if filter == 'Hour' and len(new_data) > 0:
             # bins = 0.5*(bins[:-1] + bins[1:])
             fig = px.bar(x=range(new_data['Hour'].unique().shape[0]), y=new_data['Hour'].value_counts().sort_index(),
                          labels={'x':'Time of day [24hr]', 'y':'count'})
