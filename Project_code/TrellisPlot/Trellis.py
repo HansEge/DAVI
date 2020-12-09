@@ -494,14 +494,15 @@ def update_hist(box_select_vals, dataset, param):
 
         new_data = pd.concat(data_list, ignore_index=True)
 
-        fig = px.histogram(new_data, x=filter, nbins=len(data[filter].unique()))
-        fig.update_layout(bargap=0.2)
-        fig.update_xaxes(type='category')
+        fig = px.bar(new_data, x=new_data[filter].value_counts().sort_index().axes[0].to_series(),
+                     y=new_data[filter].value_counts().sort_index(),
+                     labels=dict(x=filter, y='Count'))
 
+        fig.update_layout(bargap=0.2)
         if filter == 'Hour' and len(new_data) > 0:
             # bins = 0.5*(bins[:-1] + bins[1:])
-            fig = px.bar(x=range(new_data['Hour'].unique().shape[0]), y=new_data['Hour'].value_counts().sort_index(),
-                         labels={'x':'Time of day [24hr]', 'y':'count'})
+            fig = px.bar(new_data, x=range(new_data['Hour'].unique().shape[0]), y=new_data['Hour'].value_counts().sort_index())
+                         #labels={'x':'Time of day [24hr]', 'y':'count'})
 
         return fig
 
